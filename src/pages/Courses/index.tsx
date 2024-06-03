@@ -355,18 +355,18 @@ const CourseListPage = () => {
     //   valueType: 'time',
     //   hideInTable: true,
     // },
-    {
-      title: 'Ngày bắt đầu',
-      dataIndex: 'startDate',
-      valueType: 'datetime',
-      hideInSearch: true,
-    },
-    {
-      title: 'Ngày kết thúc',
-      dataIndex: 'finishDate',
-      valueType: 'datetime',
-      hideInSearch: true,
-    },
+    // {
+    //   title: 'Ngày bắt đầu',
+    //   dataIndex: 'startDate',
+    //   valueType: 'datetime',
+    //   hideInSearch: true,
+    // },
+    // {
+    //   title: 'Ngày kết thúc',
+    //   dataIndex: 'finishDate',
+    //   valueType: 'datetime',
+    //   hideInSearch: true,
+    // },
     // {
     //   title: 'Ngày cập nhật',
     //   dataIndex: 'updateDate',
