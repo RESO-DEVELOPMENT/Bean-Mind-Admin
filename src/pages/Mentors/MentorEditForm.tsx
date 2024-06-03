@@ -137,20 +137,20 @@ function MentorEditForm() {
 
   const onSubmit = async (user: TMentor) => {
     try {
-      await userApi
-        .update(user!)
-        .then(() =>
-          enqueueSnackbar(`Cập nhât thành công`, {
-            variant: 'success',
-          })
-        )
-        .then(() => navigate(PATH_DASHBOARD.mentors.list))
-        .catch((err: any) => {
-          const errMsg = get(err.response, ['data', 'message'], `Có lỗi xảy ra. Vui lòng thử lại`);
-          enqueueSnackbar(errMsg, {
-            variant: 'error',
-          });
-        });
+      // await userApi
+      //   .update(user!)
+      //   .then(() =>
+      //     enqueueSnackbar(`Cập nhât thành công`, {
+      //       variant: 'success',
+      //     })
+      //   )
+      //   .then(() => navigate(PATH_DASHBOARD.mentors.list))
+      //   .catch((err: any) => {
+      //     const errMsg = get(err.response, ['data', 'message'], `Có lỗi xảy ra. Vui lòng thử lại`);
+      //     enqueueSnackbar(errMsg, {
+      //       variant: 'error',
+      //     });
+      //   });
     } catch (error) {
       console.error(error);
     }
@@ -174,7 +174,7 @@ function MentorEditForm() {
           // download url
           getDownloadURL(uploadTask.snapshot.ref).then((url) => {
             console.log(url);
-            setValue('imageUrl', url);
+            setValue('imgUrl', url);
           });
         }
       );
