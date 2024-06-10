@@ -1,6 +1,7 @@
 export type TUser = {
   id: number;
-  fullName: string;
+  firstName: string;
+  lastName: string;
   gender: number;
   imageUrl: string;
   phone: string;
@@ -12,6 +13,13 @@ export type TUser = {
   roleId: number;
 };
 
+export type TStudent = {
+  id: number;
+  firstName: string;
+  lastName: string
+  dateOfBirth: string;
+  imgUrl: string;
+};
 export type TMentor = {
   id: number;
   firstName: string;
@@ -34,13 +42,15 @@ export type TMentor = {
   insDate: string;
   updDate: string;
   delflg: true;
+  dayOfBirth: string;
 
-
+  
 };
 
 export type TAdmin = {
   id: number;
-  fullName: string;
+  firstName: string;
+  lastName: string;
   gender: number;
   imageUrl: string;
   phone: string;

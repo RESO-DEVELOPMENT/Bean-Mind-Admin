@@ -192,16 +192,16 @@ const MetorListPage = () => {
       title: 'Số điện thoại',
       dataIndex: 'phone',
     },
-    {
-      title: 'Thứ hạng',
-      dataIndex: 'badge',
-      render: (badge: any) => (
-        <Label color={badge === 3 ? 'info' : badge === 2 ? 'primary' : 'default'}>
-          {badge === 3 ? 'Senior' : badge === 2 ? 'Junior' : 'Fresher'}
-        </Label>
-      ),
-      hideInSearch: true,
-    },
+    // {
+    //   title: 'Thứ hạng',
+    //   dataIndex: 'badge',
+    //   render: (badge: any) => (
+    //     <Label color={badge === 3 ? 'info' : badge === 2 ? 'primary' : 'default'}>
+    //       {badge === 3 ? 'Senior' : badge === 2 ? 'Junior' : 'Fresher'}
+    //     </Label>
+    //   ),
+    //   hideInSearch: true,
+    // },
     {
       title: 'Vai trò',
       dataIndex: 'roleId',
@@ -344,7 +344,7 @@ const MetorListPage = () => {
           onDelete={deleteSubjectHandler}
           title={
             <>
-              {translate('common.confirmDeleteTitle')} <strong>{currentItem?.fullName}</strong>
+              {translate('common.confirmDeleteTitle')} <strong>{currentItem?.firstName}</strong>
             </>
           }
         />,
@@ -355,7 +355,7 @@ const MetorListPage = () => {
           <ResoTable
             rowKey="id"
             defaultFilters={{
-              'role-id': 2,
+              // 'role-id': 2,
             }}
             ref={ref}
             onEdit={(user: any) => {

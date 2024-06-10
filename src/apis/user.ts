@@ -1,8 +1,9 @@
 import { TUser } from 'types/user';
 import { generateAPIWithPaging } from './utils';
 import request from 'utils/axios';
+//ganws
+const getUsers = (params?: any) => request.get('/teachers', { params });
 
-const getUsers = (params?: any) => request.get('/admin/users', { params });
 
 const getUserById = (id: number, params?: any) => request.get(`/admin/users/${id}`, { params });
 

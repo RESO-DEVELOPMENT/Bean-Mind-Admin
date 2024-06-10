@@ -250,24 +250,26 @@ const CourseListPage = () => {
   const columns = [
     {
       title: 'STT',
-      dataIndex: 'id',
+      dataIndex: 'index',
       hideInSearch: true,
     },
     {
       title: 'Chủ đề',
       dataIndex: 'title',
     },
-    {
-      title: 'Mô tả',
-      dataIndex: 'description',
-    },
+    // {
+    //   title: 'Mô tả',
+    //   dataIndex: 'description',
+    // },
     {
       title: 'Ngày bắt đầu',
       dataIndex: 'startDate',
+      valueType: 'datetime',
     },
     {
       title: 'Ngày kết thúc',
       dataIndex: 'endDate',
+      valueType: 'datetime',
     },
     {
       title: translate('common.table.isAvailable'),
