@@ -2,7 +2,7 @@ import { TSubject } from 'types/subject';
 import { generateAPIWithPaging } from './utils';
 import request from 'utils/axios';
 
-const getSubjects = (params?: any) => request.get('/admin/subjects', { params });
+const getSubjects = (params?: any) => request.get('/subjects', { params });
 
 const getSubjectById = (id: number, params?: any) =>
   request.get<TSubject>(`/admin/subjects/${id}`, { params });

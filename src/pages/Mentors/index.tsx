@@ -362,7 +362,7 @@ const MetorListPage = () => {
               navigate(`${PATH_DASHBOARD.mentors.root}/${user.id}`);
               setIsUpdate(true);
             }}
-            getData={userApi.getUsers}
+            getData={userApi.getMentors}
             onDelete={setCurrentItem}
             columns={columns}
           />

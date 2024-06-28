@@ -10,7 +10,7 @@ const remove = (id: number) => request.delete(`/admin/courses/${id}`);
 
 const add = (data: any) => request.post('/courses', data);
 
-const update = (id: number, data: TCourse) => request.put(`/admin/courses/${id}`, data);
+const update = (id: number, data: TCourse) => request.put(`/courses/${id}`, data);
 
 const courseApi = {
   ...generateAPIWithPaging<TCourse>('courses'),

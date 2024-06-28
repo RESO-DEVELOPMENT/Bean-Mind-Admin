@@ -365,7 +365,7 @@ const UserListPage = () => {
                 navigate(`${PATH_DASHBOARD.users.root}/${user.id}`);
                 setIsUpdate(true);
               }}
-              getData={userApi.getUsers}
+              getData={userApi.getMentees}
               onDelete={setCurrentItem}
               columns={columns}
             />
