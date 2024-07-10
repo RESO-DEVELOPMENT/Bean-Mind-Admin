@@ -34,8 +34,11 @@ import { useEffect, useRef, useState } from 'react';
 // components
 import { useNavigate } from 'react-router-dom';
 import userApi from 'apis/user';
+import mentorApi from 'apis/mentor';
 import { PATH_DASHBOARD } from 'routes/paths';
 import { TUser } from 'types/user';
+import { TMentor } from 'types/user';
+import { TStudent } from 'types/user';
 import { FormProvider, useForm, UseFormReturn } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -150,7 +153,7 @@ const AdminListPage = () => {
         });
       });
 
-  const updateCourseHandler = (user: TUser) =>
+  const updateCourseHandler = (user: TStudent) =>
     userApi
       .update(user!)
       .then(() => ref.current?.reload)
@@ -352,7 +355,7 @@ const AdminListPage = () => {
               navigate(`${PATH_DASHBOARD.admins.root}/${user.id}`);
               setIsUpdate(true);
             }}
-            getData={userApi.getMentors}
+            getData={mentorApi.getUsers}
             onDelete={setCurrentItem}
             columns={columns}
           />

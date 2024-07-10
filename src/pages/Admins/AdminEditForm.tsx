@@ -14,11 +14,12 @@ import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { PATH_DASHBOARD } from 'routes/paths';
-import { TAdmin } from 'types/user';
+import { TAdmin, TMentor } from 'types/user';
 import { fData } from 'utils/formatNumber';
 import * as yup from 'yup';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { storage } from 'config';
+import mentorApi from 'apis/mentor';
 
 // ----------------------------------------------------------------------
 
@@ -52,11 +53,11 @@ function AdminEditForm() {
     // price: yup.number().moreThan(0, 'Price should not be $0.00'),
   });
 
-  const { data: user } = useQuery(['user', id], () => userApi.getUserById(Number(id)), {
+  const { data: user } = useQuery(['user', id], () => userApi.getUserById(String(id)), {
     select: (res) => res.data,
   });
 
-  const methods = useForm<TAdmin>({
+  const methods = useForm<TMentor>({
     resolver: yupResolver(schema),
     defaultValues: {
       ...user,
@@ -135,9 +136,9 @@ function AdminEditForm() {
     return option;
   };
 
-  const onSubmit = async (user: TAdmin) => {
+  const onSubmit = async (user: TMentor) => {
     try {
-      await userApi
+      await mentorApi 
         .update(user!)
         .then(() =>
           enqueueSnackbar(`Cập nhât thành công`, {
@@ -174,7 +175,7 @@ function AdminEditForm() {
           // download url
           getDownloadURL(uploadTask.snapshot.ref).then((url) => {
             console.log(url);
-            setValue('imageUrl', url);
+            setValue('imgUrl', url);
           });
         }
       );

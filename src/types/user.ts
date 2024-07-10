@@ -14,14 +14,16 @@ export type TUser = {
 };
 
 export type TStudent = {
-  id: number;
+  id: string;
   firstName: string;
   lastName: string
   dateOfBirth: string;
   imgUrl: string;
+  insDate: string;
+  updDate: string;
 };
 export type TMentor = {
-  id: number;
+  id: string;
   firstName: string;
   lastName: string;
 
@@ -48,7 +50,7 @@ export type TMentor = {
 };
 
 export type TAdmin = {
-  id: number;
+  id: string;
   firstName: string;
   lastName: string;
   gender: number;

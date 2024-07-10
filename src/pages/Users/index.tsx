@@ -35,7 +35,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import userApi from 'apis/user';
 import { PATH_DASHBOARD } from 'routes/paths';
-import { TUser } from 'types/user';
+import { TStudent } from 'types/user';
 import { FormProvider, useForm, UseFormReturn } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -75,11 +75,11 @@ const UserListPage = () => {
   const navigate = useNavigate();
   const { translate } = useLocales();
   const { enqueueSnackbar } = useSnackbar();
-  const [currentItem, setCurrentItem] = useState<TUser | null>(null);
+  const [currentItem, setCurrentItem] = useState<TStudent | null>(null);
   const [activeTab, setActiveTab] = useState('1');
   const ref = useRef<{ reload: Function; formControl: UseFormReturn<any> }>();
 
-  const { data: allData } = useQuery('users', () => request.get('/admin/users?role-id=1'), {
+  const { data: allData } = useQuery('students', () => request.get('students'), {
     select: (res) => res.data.data,
   });
   const pending = groupBy(allData, (data: any) => data.isPending);
@@ -98,7 +98,7 @@ const UserListPage = () => {
   const schema = yup.object().shape({
     name: yup.string().required('Vui lòng nhập tên khoá học'),
   });
-  const courseForm = useForm<TUser>({
+  const courseForm = useForm<TStudent>({
     resolver: yupResolver(schema),
     shouldUnregister: true,
     // defaultValues: { ...data },
@@ -129,7 +129,7 @@ const UserListPage = () => {
         });
       });
 
-  const updateCourseHandler = (user: TUser) =>
+  const updateCourseHandler = (user: TStudent) =>
     userApi
       .update(user!)
       .then(() => ref.current?.reload)
@@ -162,6 +162,11 @@ const UserListPage = () => {
     {
       title: 'Họ và tên',
       dataIndex: 'fullName',
+      render: (text: any, record: any) => {
+        const lastName = record.lastName;
+        const firstName = record.firstName;
+        return `${lastName} ${firstName}`;
+      },
     },
     {
       title: 'Email',
@@ -365,7 +370,7 @@ const UserListPage = () => {
                 navigate(`${PATH_DASHBOARD.users.root}/${user.id}`);
                 setIsUpdate(true);
               }}
-              getData={userApi.getMentees}
+              getData={userApi.getUsers}
               onDelete={setCurrentItem}
               columns={columns}
             />

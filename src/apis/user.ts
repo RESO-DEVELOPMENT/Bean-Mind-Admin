@@ -1,23 +1,20 @@
-import { TUser } from 'types/user';
+import { TStudent } from 'types/user';
 import { generateAPIWithPaging } from './utils';
 import request from 'utils/axios';
-//ganws
-const getMentors = (params?: any) => request.get('/teachers', { params });
 
-const getMentees = (params? : any) => request.get('/students',{params});
+const getUsers = (params?: any) => request.get('/students', { params });
 
-const getUserById = (id: number, params?: any) => request.get(`/admin/users/${id}`, { params });
+const getUserById = (id: string, params?: any) => request.get(`/students/${id}`, { params });
 
-const remove = (id: number) => request.delete(`/admin/users/${id}`);
+const remove = (id: string) => request.delete(`/students/${id}`);
 
-const add = (data: any) => request.post('/admin/users', data);
+const add = (data: any) => request.post('/students', data);
 
-const update = (data: TUser) => request.put(`/admin/users`, data);
+const update = (data: TStudent) => request.put(`/students`, data);
 
 const userApi = {
-  ...generateAPIWithPaging<TUser>('courses'),
-  getMentors,
-  getMentees,
+  ...generateAPIWithPaging<TStudent>('students'),
+  getUsers,
   getUserById,
   remove,
   add,

@@ -1,14 +1,16 @@
 export type TCourse = {
-  id: number;
+  id: string;
   title: string;
+  courseCode?: string;
   description: string;
   startDate: string;
   endDate: string;
   // status: number;
   curriculumId: string;
+  schoolId: string;
   insDate: string;
   updDate: string;
-  delFlg: boolean
+  delFlg: boolean;
 
 
 

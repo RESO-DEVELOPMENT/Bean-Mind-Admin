@@ -24,7 +24,7 @@ interface Props extends Omit<Partial<DialogProps>, 'title'> {
   onCancle?: () => void;
   // onOk: () => Promise<any>;
   children?: ReactNode;
-  subject_id?: number;
+  subject_id?: string;
   onAdd?: (data: TSubject) => Promise<any>;
   onEdit?: (data: any) => Promise<any>;
   onClose: () => any;
@@ -74,7 +74,7 @@ const SubjectForm: React.FC<Props> = ({
       reset(data);
     }
     if (isNew) {
-      reset({ name: '' });
+      reset({ title: '' });
     }
   }, [data, isNew, reset, subject_id]);
 

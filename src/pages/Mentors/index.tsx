@@ -33,9 +33,9 @@ import { useSnackbar } from 'notistack';
 import { useEffect, useRef, useState } from 'react';
 // components
 import { useNavigate } from 'react-router-dom';
-import userApi from 'apis/user';
+import mentorApi from 'apis/mentor';
 import { PATH_DASHBOARD } from 'routes/paths';
-import { TUser } from 'types/user';
+import { TMentor } from 'types/user';
 import { FormProvider, useForm, UseFormReturn } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -76,10 +76,10 @@ const MetorListPage = () => {
   const [activeTab, setActiveTab] = useState('1');
   const { translate } = useLocales();
   const { enqueueSnackbar } = useSnackbar();
-  const [currentItem, setCurrentItem] = useState<TUser | null>(null);
+  const [currentItem, setCurrentItem] = useState<TMentor | null>(null);
   const ref = useRef<{ reload: Function; formControl: UseFormReturn<any> }>();
 
-  const { data: allData } = useQuery('users', () => request.get('/admin/users'), {
+  const { data: allData } = useQuery('teachers', () => request.get('teachers'), {
     select: (res) => res.data.data,
   });
   const status = groupBy(allData, (data: any) => data.status);
@@ -119,7 +119,7 @@ const MetorListPage = () => {
   const schema = yup.object().shape({
     name: yup.string().required('Vui lòng nhập tên khoá học'),
   });
-  const courseForm = useForm<TUser>({
+  const courseForm = useForm<TMentor>({
     resolver: yupResolver(schema),
     shouldUnregister: true,
     // defaultValues: { ...data },
@@ -134,7 +134,7 @@ const MetorListPage = () => {
   // }, [data, reset]);
 
   const deleteSubjectHandler = () =>
-    userApi
+    mentorApi
       .delete(currentItem?.id!)
       .then(() => setCurrentItem(null))
       .then(() => ref.current?.reload)
@@ -150,8 +150,8 @@ const MetorListPage = () => {
         });
       });
 
-  const updateCourseHandler = (user: TUser) =>
-    userApi
+  const updateCourseHandler = (user: TMentor) =>
+    mentorApi
       .update(user!)
       .then(() => ref.current?.reload)
       .then(() =>
@@ -362,7 +362,7 @@ const MetorListPage = () => {
               navigate(`${PATH_DASHBOARD.mentors.root}/${user.id}`);
               setIsUpdate(true);
             }}
-            getData={userApi.getMentors}
+            getData={mentorApi.getUsers}
             onDelete={setCurrentItem}
             columns={columns}
           />

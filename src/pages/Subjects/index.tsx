@@ -38,6 +38,8 @@ import { useQuery } from 'react-query';
 import { useParams } from 'react-router';
 import LoadingAsyncButton from 'components/LoadingAsyncButton';
 
+import moment from 'moment';
+
 const SubjectListPage = () => {
   const navigate = useNavigate();
   const { translate } = useLocales();
@@ -86,12 +88,35 @@ const SubjectListPage = () => {
       });
   };
 
+  // const updateSubjectHandler = async (subject: any) => {
+  //   const updateSubject = currentUpdateItem;
+  //   updateSubject!.title = subject.name;
+  //   console.log('Subject', updateSubject);
+  //   await subjectApi
+  //     .update(updateSubject!)
+  //     .then(tableRef.current?.reload)
+  //     .then(() =>
+  //       enqueueSnackbar(`Cập nhật thành công`, {
+  //         variant: 'success',
+  //       })
+  //     )
+  //     .catch((err: any) => {
+  //       const errMsg = get(err.response, ['data', 'message'], `Có lỗi xảy ra. Vui lòng thử lại`);
+  //       enqueueSnackbar(errMsg, {
+  //         variant: 'error',
+  //       });
+  //     });
+  // };
+
   const updateSubjectHandler = async (subject: any) => {
-    const updateSubject = currentUpdateItem;
-    updateSubject!.name = subject.name;
-    console.log('Subject', updateSubject);
+    const updatedSubject: Partial<TSubject> = {
+      title: subject.title,
+      description: subject.description,
+      subjectCode: subject.subjectCode,
+      // Include other fields you want to update
+    };
     await subjectApi
-      .update(updateSubject!)
+      .update(currentUpdateItem!.id, updatedSubject) // Pass the ID and updated data
       .then(tableRef.current?.reload)
       .then(() =>
         enqueueSnackbar(`Cập nhật thành công`, {
@@ -114,8 +139,30 @@ const SubjectListPage = () => {
     },
     {
       title: 'Tên môn học',
-      dataIndex: 'name',
+      dataIndex: 'title',
     },
+    {
+      title: 'Mã môn học',
+      dataIndex: 'subjectCode',
+    },
+    {
+      title: 'Chi tiết',
+      dataIndex: 'description',
+    },
+    // {
+    //   title: 'Ngày tạo',
+    //   dataIndex: 'insDate',
+    //   render: (value: Date | null) => {
+    //     return value ? moment(value).format('YYYY-MM-DD HH:mm:ss') : null;
+    //   },
+    // },
+    // {
+    //   title: 'Ngày cập nhật',
+    //   dataIndex: 'updDate',
+    //   render: (value: Date | null) => {
+    //     return value ? moment(value).format('YYYY-MM-DD HH:mm:ss') : null;
+    //   },
+    // },
     // {
     //   title: 'Xác thực',
     //   dataIndex: 'isVerified',
@@ -224,14 +271,20 @@ const SubjectListPage = () => {
     >
       <SubjectForm
         open={formModal}
-        subject_id={currentUpdateItem?.id}
+        //subject_id={currentUpdateItem?.id}
+        subject_id={currentUpdateItem ? currentUpdateItem.id : undefined}
         onAdd={addSubjectHandler}
         onEdit={updateSubjectHandler}
         onClose={() => setFormModal(false)}
       >
         <Grid container spacing={2}>
           <Grid item xs={6}>
-            <InputField fullWidth required name="name" label="Tên môn học" />
+            <InputField fullWidth required name="title" label="Tên môn học"
+              defaultValue={currentUpdateItem?.title || ''} />
+            <InputField fullWidth required name="description" label="Chi tiết môn học"
+              defaultValue={currentUpdateItem?.description || ''} />
+            <InputField fullWidth required name="subjectCode" label="Mã môn học"
+              defaultValue={currentUpdateItem?.subjectCode || ''} />
           </Grid>
         </Grid>
       </SubjectForm>
@@ -242,7 +295,7 @@ const SubjectListPage = () => {
         onDelete={deleteSubjectHandler}
         title={
           <>
-            {translate('common.confirmDeleteTitle')} <strong>{currentDeleteItem?.name}</strong>
+            {translate('common.confirmDeleteTitle')} <strong>{currentDeleteItem?.title}</strong>
           </>
         }
       />

@@ -14,7 +14,7 @@ import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { PATH_DASHBOARD } from 'routes/paths';
-import { TUser } from 'types/user';
+import { TStudent } from 'types/user';
 import { fData } from 'utils/formatNumber';
 import * as yup from 'yup';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
@@ -52,11 +52,11 @@ function UserEditForm() {
     // price: yup.number().moreThan(0, 'Price should not be $0.00'),
   });
 
-  const { data: user } = useQuery(['user', id], () => userApi.getUserById(Number(id)), {
+  const { data: user } = useQuery(['user', id], () => userApi.getUserById(String(id)), {
     select: (res) => res.data,
   });
 
-  const methods = useForm<TUser>({
+  const methods = useForm<TStudent>({
     resolver: yupResolver(schema),
     defaultValues: {
       ...user,
@@ -135,7 +135,7 @@ function UserEditForm() {
     return option;
   };
 
-  const onSubmit = async (user: TUser) => {
+  const onSubmit = async (user: TStudent) => {
     try {
       await userApi
         .update(user!)
@@ -174,7 +174,7 @@ function UserEditForm() {
           // download url
           getDownloadURL(uploadTask.snapshot.ref).then((url) => {
             console.log(url);
-            setValue('imageUrl', url);
+            setValue('imgUrl', url);
           });
         }
       );

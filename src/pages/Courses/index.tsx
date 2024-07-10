@@ -115,8 +115,8 @@ const CourseListPage = () => {
   const { id } = useParams();
 
   const { data, isLoading } = useQuery(
-    ['course', currentItem],
-    () => courseApi.getCourseById(Number(currentItem)),
+    ['courses', currentItem],
+    () => courseApi.getCourseById(String(currentItem)),
     {
       select: (res) => res.data,
     }

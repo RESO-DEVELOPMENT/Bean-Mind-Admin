@@ -52,7 +52,7 @@ function MentorEditForm() {
     // price: yup.number().moreThan(0, 'Price should not be $0.00'),
   });
 
-  const { data: user } = useQuery(['user', id], () => userApi.getUserById(Number(id)), {
+  const { data: user } = useQuery(['user', id], () => userApi.getUserById(String(id)), {
     select: (res) => res.data,
   });
 

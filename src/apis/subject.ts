@@ -4,17 +4,17 @@ import request from 'utils/axios';
 
 const getSubjects = (params?: any) => request.get('/subjects', { params });
 
-const getSubjectById = (id: number, params?: any) =>
-  request.get<TSubject>(`/admin/subjects/${id}`, { params });
+const getSubjectById = (id: string, params?: any) =>
+  request.get<TSubject>(`/subjects/${id}`, { params });
 
-const remove = (id: number) => request.delete(`/admin/subjects/${id}`);
+const remove = (id: string) => request.delete(`/subjects/${id}`);
 
-const add = (data: any) => request.post('/admin/subjects', data);
+const add = (data: any) => request.post('/subjects', data);
 
-const update = (data: TSubject) => request.put(`/admin/subjects`, data);
+const update = (id: string, data: Partial<TSubject>) => request.patch(`/subjects`, data);
 
 const subjectApi = {
-  ...generateAPIWithPaging<TSubject>('admin/subjects'),
+  ...generateAPIWithPaging<TSubject>('subjects'),
   getSubjects,
   getSubjectById,
   remove,

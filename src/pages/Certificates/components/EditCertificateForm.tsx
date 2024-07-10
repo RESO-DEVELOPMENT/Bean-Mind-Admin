@@ -94,7 +94,7 @@ function CertificateEditForm() {
                 Tên Mentor : {certificate?.mentor?.firstName ?? ' '}
               </Typography>
               <Typography variant="h6">
-                Tên Môn học : {certificate?.subject?.name ?? ' '}
+                Tên Môn học : {certificate?.subject?.title ?? ' '}
               </Typography>
               <Stack direction="row">
                 <Typography variant="h6">Trạng thái :</Typography>
