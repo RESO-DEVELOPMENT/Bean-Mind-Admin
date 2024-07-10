@@ -8,7 +8,7 @@ export function fDate(date: string | number | Date, formatStr: string = 'dd/MM/y
 }
 
 export function fDateTime(date: string | number | Date) {
-  return format(new Date(date), 'dd/MM/yyyy HH:mm:sss');
+  return format(new Date(date), 'dd/MM/yyyy HH:mm');
 }
 
 export function fDateTimeSuffix(date: string | number | Date) {

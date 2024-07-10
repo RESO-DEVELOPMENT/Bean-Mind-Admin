@@ -1,7 +1,7 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { LoadingButton } from '@mui/lab';
 import { Box, Card, Grid, Stack, Typography } from '@mui/material';
-import userApi from 'apis/user';
+import studentApi from 'apis/user';
 import { AutoCompleteField } from 'components/form';
 import HeaderBreadcrumbs from 'components/HeaderBreadcrumbs';
 import { FormProvider, RHFTextField, RHFUploadAvatar } from 'components/hook-form';
@@ -14,7 +14,7 @@ import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { PATH_DASHBOARD } from 'routes/paths';
-import { TStudent } from 'types/user';
+import { TMentee } from 'types/user';
 import { fData } from 'utils/formatNumber';
 import * as yup from 'yup';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
@@ -52,11 +52,11 @@ function UserEditForm() {
     // price: yup.number().moreThan(0, 'Price should not be $0.00'),
   });
 
-  const { data: user } = useQuery(['user', id], () => userApi.getUserById(String(id)), {
+  const { data: user } = useQuery(['students', id], () => studentApi.getStudentById(String(id)), {
     select: (res) => res.data,
   });
 
-  const methods = useForm<TStudent>({
+  const methods = useForm<TMentee>({
     resolver: yupResolver(schema),
     defaultValues: {
       ...user,
@@ -135,9 +135,9 @@ function UserEditForm() {
     return option;
   };
 
-  const onSubmit = async (user: TStudent) => {
+  const onSubmit = async (user: TMentee) => {
     try {
-      await userApi
+      await studentApi
         .update(user!)
         .then(() =>
           enqueueSnackbar(`Cập nhât thành công`, {

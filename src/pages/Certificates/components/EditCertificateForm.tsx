@@ -91,7 +91,7 @@ function CertificateEditForm() {
             <Box>
               <Typography variant="h6">Tên chứng chỉ : {certificate?.name}</Typography>
               <Typography variant="h6">
-                Tên Mentor : {certificate?.mentor?.firstName ?? ' '}
+                Tên Mentor : {certificate?.mentor?.fullName ?? ' '}
               </Typography>
               <Typography variant="h6">
                 Tên Môn học : {certificate?.subject?.title ?? ' '}

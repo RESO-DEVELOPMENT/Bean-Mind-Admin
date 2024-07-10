@@ -36,7 +36,6 @@ import { useNavigate } from 'react-router-dom';
 import userApi from 'apis/user';
 import { PATH_DASHBOARD } from 'routes/paths';
 import { TUser } from 'types/user';
-import { TStudent } from 'types/user';
 import { FormProvider, useForm, UseFormReturn } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -143,7 +142,7 @@ const CertificateListPage = () => {
         });
       });
 
-  const updateCourseHandler = (user: TStudent) =>
+  const updateCourseHandler = (user: TUser) =>
     userApi
       .update(user!)
       .then(() => ref.current?.reload)
@@ -337,7 +336,7 @@ const CertificateListPage = () => {
           onDelete={deleteSubjectHandler}
           title={
             <>
-              {translate('common.confirmDeleteTitle')} <strong>{currentItem?.firstName}</strong>
+              {translate('common.confirmDeleteTitle')} <strong>{currentItem?.fullName}</strong>
             </>
           }
         />,

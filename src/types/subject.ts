@@ -1,10 +1,12 @@
 export type TSubject = {
   id: string;
+  subjectCode?: string | null;
   title: string;
-  subjectCode: string;
-  description: string;
+  description?: string | null;
   courseId?: string | null;
   schoolId?: string | null;
-  insDate?: Date | null;
-  updDate?: Date | null;
+  insDate?: string | null;
+  updDate?: string | null;
+  // publishedDate?: Date;
+  delFlg?: boolean | null;
 };

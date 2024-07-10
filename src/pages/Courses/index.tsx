@@ -257,19 +257,17 @@ const CourseListPage = () => {
       title: 'Chủ đề',
       dataIndex: 'title',
     },
-    // {
-    //   title: 'Mô tả',
-    //   dataIndex: 'description',
-    // },
+    {
+      title: 'Mô tả',
+      dataIndex: 'description',
+    },
     {
       title: 'Ngày bắt đầu',
       dataIndex: 'startDate',
-      valueType: 'datetime',
     },
     {
       title: 'Ngày kết thúc',
       dataIndex: 'endDate',
-      valueType: 'datetime',
     },
     {
       title: translate('common.table.isAvailable'),
@@ -357,7 +355,7 @@ const CourseListPage = () => {
     //   valueType: 'time',
     //   hideInTable: true,
     // },
-    //  {
+    // {
     //   title: 'Ngày bắt đầu',
     //   dataIndex: 'startDate',
     //   valueType: 'datetime',
@@ -401,16 +399,16 @@ const CourseListPage = () => {
         />
       }
       actions={() => [
-        // <Button
-        //   key="create-subject"
-        //   onClick={() => {
-        //     navigate(PATH_DASHBOARD.courses.new);
-        //   }}
-        //   variant="contained"
-        //   startIcon={<Icon icon={plusFill} />}
-        // >
-        //   {translate('pages.subjects.addBtn')}
-        // </Button>,
+        /*<Button
+          key="create-subject"
+          onClick={() => {
+            navigate(PATH_DASHBOARD.courses.new);
+          }}
+          variant="contained"
+          startIcon={<Icon icon={plusFill} />}
+        >
+          {translate('pages.subjects.addBtn')}
+        </Button>,*/
         <DeleteConfirmDialog
           key={''}
           open={Boolean(currentItem)}

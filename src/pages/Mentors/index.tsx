@@ -33,7 +33,7 @@ import { useSnackbar } from 'notistack';
 import { useEffect, useRef, useState } from 'react';
 // components
 import { useNavigate } from 'react-router-dom';
-import mentorApi from 'apis/mentor';
+import teacherApi from 'apis/mentor';
 import { PATH_DASHBOARD } from 'routes/paths';
 import { TMentor } from 'types/user';
 import { FormProvider, useForm, UseFormReturn } from 'react-hook-form';
@@ -79,7 +79,7 @@ const MetorListPage = () => {
   const [currentItem, setCurrentItem] = useState<TMentor | null>(null);
   const ref = useRef<{ reload: Function; formControl: UseFormReturn<any> }>();
 
-  const { data: allData } = useQuery('teachers', () => request.get('teachers'), {
+  const { data: allData } = useQuery('teachers', () => request.get('/teachers'), {
     select: (res) => res.data.data,
   });
   const status = groupBy(allData, (data: any) => data.status);
@@ -134,7 +134,7 @@ const MetorListPage = () => {
   // }, [data, reset]);
 
   const deleteSubjectHandler = () =>
-    mentorApi
+    teacherApi
       .delete(currentItem?.id!)
       .then(() => setCurrentItem(null))
       .then(() => ref.current?.reload)
@@ -151,7 +151,7 @@ const MetorListPage = () => {
       });
 
   const updateCourseHandler = (user: TMentor) =>
-    mentorApi
+    teacherApi
       .update(user!)
       .then(() => ref.current?.reload)
       .then(() =>
@@ -183,7 +183,20 @@ const MetorListPage = () => {
     {
       title: 'Họ và tên',
       dataIndex: 'fullName',
+      render: (text: any, record: any) => {
+        const lastName = record.lastName;
+        const firstName = record.firstName;
+        return `${lastName} ${firstName}`;
+      },
     },
+    // {
+    //   title: 'Họ',
+    //   dataIndex: 'lastName',
+    // },
+    // {
+    //   title: 'Tên',
+    //   dataIndex: 'firstName',
+    // },
     {
       title: 'Email',
       dataIndex: 'email',
@@ -192,16 +205,16 @@ const MetorListPage = () => {
       title: 'Số điện thoại',
       dataIndex: 'phone',
     },
-    // {
-    //   title: 'Thứ hạng',
-    //   dataIndex: 'badge',
-    //   render: (badge: any) => (
-    //     <Label color={badge === 3 ? 'info' : badge === 2 ? 'primary' : 'default'}>
-    //       {badge === 3 ? 'Senior' : badge === 2 ? 'Junior' : 'Fresher'}
-    //     </Label>
-    //   ),
-    //   hideInSearch: true,
-    // },
+    {
+      title: 'Thứ hạng',
+      dataIndex: 'badge',
+      render: (badge: any) => (
+        <Label color={badge === 3 ? 'info' : badge === 2 ? 'primary' : 'default'}>
+          {badge === 3 ? 'Senior' : badge === 2 ? 'Junior' : 'Fresher'}
+        </Label>
+      ),
+      hideInSearch: true,
+    },
     {
       title: 'Vai trò',
       dataIndex: 'roleId',
@@ -344,7 +357,7 @@ const MetorListPage = () => {
           onDelete={deleteSubjectHandler}
           title={
             <>
-              {translate('common.confirmDeleteTitle')} <strong>{currentItem?.firstName}</strong>
+              {translate('common.confirmDeleteTitle')} <strong>{currentItem?.fullName}</strong>
             </>
           }
         />,
@@ -355,14 +368,14 @@ const MetorListPage = () => {
           <ResoTable
             rowKey="id"
             defaultFilters={{
-              // 'role-id': 2,
+              'role-id': 2,
             }}
             ref={ref}
             onEdit={(user: any) => {
               navigate(`${PATH_DASHBOARD.mentors.root}/${user.id}`);
               setIsUpdate(true);
             }}
-            getData={mentorApi.getUsers}
+            getData={teacherApi.getTeachers}
             onDelete={setCurrentItem}
             columns={columns}
           />

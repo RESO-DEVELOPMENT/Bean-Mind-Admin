@@ -57,6 +57,8 @@ const SubjectListPage = () => {
   const [isUpdate, setIsUpdate] = useState(false);
   const { id } = useParams();
   console.log(id);
+
+  //------------------------------------------------------
   //Get list of subjects
   const { data: subjectsData, isLoading: subjectsLoading } = useQuery(
     'subjects',
@@ -186,9 +188,17 @@ const SubjectListPage = () => {
       dataIndex: 'title',
     },
     {
+      title: 'Mã môn',
+      dataIndex: 'subjectCode',
+    },
+    {
       title: 'Mô tả',
       dataIndex: 'description',
     },
+    // {
+    //   title: 'ngày tạo',
+    //   dataIndex: 'insDate',
+    // }
     // {
     //   title: 'Xác thực',
     //   dataIndex: 'isVerified',

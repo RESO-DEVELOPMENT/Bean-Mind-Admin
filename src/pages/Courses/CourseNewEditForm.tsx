@@ -29,7 +29,7 @@ import {
   RHFSwitch,
   RHFRadioGroup,
   RHFSelect,
-  RHFUploadSingleFile,
+  RHFUploadSingleFile
 } from 'components/hook-form';
 import { LoadingButton, MobileDateTimePicker, DateTimePicker } from '@mui/lab';
 import ModalSubjectForm from './components/ModalSubjectForm';
@@ -228,7 +228,7 @@ function CourseNewEditForm({ isEdit }: Props) {
 
   const values = watch();
 
-  const isDateError = new Date(values.endDate) < new Date(values.startDate);
+  const isDateError = isBefore(new Date(values.endDate), new Date(values.startDate));
   const products = watch('name');
   const setProducts = (products: any) => {
     setValue('name', products);

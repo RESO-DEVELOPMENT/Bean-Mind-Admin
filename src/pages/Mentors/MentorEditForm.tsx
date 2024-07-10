@@ -1,7 +1,7 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { LoadingButton } from '@mui/lab';
 import { Box, Card, Grid, Stack, Typography } from '@mui/material';
-import userApi from 'apis/user';
+import teacherApi from 'apis/mentor';
 import { AutoCompleteField } from 'components/form';
 import HeaderBreadcrumbs from 'components/HeaderBreadcrumbs';
 import { FormProvider, RHFTextField, RHFUploadAvatar } from 'components/hook-form';
@@ -52,7 +52,7 @@ function MentorEditForm() {
     // price: yup.number().moreThan(0, 'Price should not be $0.00'),
   });
 
-  const { data: user } = useQuery(['user', id], () => userApi.getUserById(String(id)), {
+  const { data: user } = useQuery(['user', id], () => teacherApi.getTeacherById(String(id)), {
     select: (res) => res.data,
   });
 
@@ -137,20 +137,20 @@ function MentorEditForm() {
 
   const onSubmit = async (user: TMentor) => {
     try {
-      // await userApi
-      //   .update(user!)
-      //   .then(() =>
-      //     enqueueSnackbar(`Cập nhât thành công`, {
-      //       variant: 'success',
-      //     })
-      //   )
-      //   .then(() => navigate(PATH_DASHBOARD.mentors.list))
-      //   .catch((err: any) => {
-      //     const errMsg = get(err.response, ['data', 'message'], `Có lỗi xảy ra. Vui lòng thử lại`);
-      //     enqueueSnackbar(errMsg, {
-      //       variant: 'error',
-      //     });
-      //   });
+      await teacherApi
+        .update(user!)
+        .then(() =>
+          enqueueSnackbar(`Cập nhât thành công`, {
+            variant: 'success',
+          })
+        )
+        .then(() => navigate(PATH_DASHBOARD.mentors.list))
+        .catch((err: any) => {
+          const errMsg = get(err.response, ['data', 'message'], `Có lỗi xảy ra. Vui lòng thử lại`);
+          enqueueSnackbar(errMsg, {
+            variant: 'error',
+          });
+        });
     } catch (error) {
       console.error(error);
     }
@@ -174,7 +174,7 @@ function MentorEditForm() {
           // download url
           getDownloadURL(uploadTask.snapshot.ref).then((url) => {
             console.log(url);
-            setValue('imgUrl', url);
+            setValue('imageUrl', url);
           });
         }
       );

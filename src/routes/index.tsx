@@ -96,6 +96,10 @@ export default function Router() {
               path: 'new',
               element: <SubjectListPage />,
             },
+            {
+              path: ':id/view',
+              element: <SubjectViewEditForm />,
+            },
             { path: ':id', element: <SubjectListPage /> },
           ],
         },
@@ -330,6 +334,7 @@ const Page404 = Loadable(lazy(() => import('../pages/Page404')));
 
 // SUBJECT
 const SubjectListPage = Loadable(lazy(() => import('../pages/Subjects')));
+const SubjectViewEditForm = Loadable(lazy(() => import('../pages/Subjects/SubjectViewEditForm')));
 
 // COURSE
 const CourseListPage = Loadable(lazy(() => import('../pages/Courses')));

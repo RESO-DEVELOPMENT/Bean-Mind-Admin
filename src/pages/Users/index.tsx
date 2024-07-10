@@ -33,9 +33,9 @@ import { useSnackbar } from 'notistack';
 import { useEffect, useRef, useState } from 'react';
 // components
 import { useNavigate } from 'react-router-dom';
-import userApi from 'apis/user';
+import studentApi from 'apis/user';
 import { PATH_DASHBOARD } from 'routes/paths';
-import { TStudent } from 'types/user';
+import { TMentee } from 'types/user';
 import { FormProvider, useForm, UseFormReturn } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -48,6 +48,7 @@ import { TabContext, TabList } from '@mui/lab';
 import { type } from 'os';
 import axios from 'axios';
 import request from 'utils/axios';
+import format from 'date-fns/format';
 
 const STATUS_OPTIONS = ['Tất cả', 'Đã duyệt', 'Chờ duyệt', 'Đã huỷ'];
 
@@ -75,7 +76,7 @@ const UserListPage = () => {
   const navigate = useNavigate();
   const { translate } = useLocales();
   const { enqueueSnackbar } = useSnackbar();
-  const [currentItem, setCurrentItem] = useState<TStudent | null>(null);
+  const [currentItem, setCurrentItem] = useState<TMentee | null>(null);
   const [activeTab, setActiveTab] = useState('1');
   const ref = useRef<{ reload: Function; formControl: UseFormReturn<any> }>();
 
@@ -98,7 +99,7 @@ const UserListPage = () => {
   const schema = yup.object().shape({
     name: yup.string().required('Vui lòng nhập tên khoá học'),
   });
-  const courseForm = useForm<TStudent>({
+  const courseForm = useForm<TMentee>({
     resolver: yupResolver(schema),
     shouldUnregister: true,
     // defaultValues: { ...data },
@@ -113,7 +114,7 @@ const UserListPage = () => {
   // }, [data, reset]);
 
   const deleteSubjectHandler = () =>
-    userApi
+    studentApi
       .delete(currentItem?.id!)
       .then(() => setCurrentItem(null))
       .then(() => ref.current?.reload)
@@ -129,8 +130,8 @@ const UserListPage = () => {
         });
       });
 
-  const updateCourseHandler = (user: TStudent) =>
-    userApi
+  const updateCourseHandler = (user: TMentee) =>
+    studentApi
       .update(user!)
       .then(() => ref.current?.reload)
       .then(() =>
@@ -153,7 +154,7 @@ const UserListPage = () => {
     },
     {
       title: 'Hình ảnh',
-      dataIndex: 'imageUrl',
+      dataIndex: 'imgUrl',
       hideInSearch: true,
       render: (src: any, { title }: any) => (
         <Avatar alt={title} src={src} style={{ width: '54px', height: '54px' }} />
@@ -169,33 +170,43 @@ const UserListPage = () => {
       },
     },
     {
-      title: 'Email',
-      dataIndex: 'email',
-    },
-    {
-      title: 'Số điện thoại',
-      dataIndex: 'phone',
-    },
-    {
-      title: 'Thứ hạng',
-      dataIndex: 'badge',
-      render: (badge: any) => (
-        <Label color={badge === 1 ? 'info' : badge === 2 ? 'primary' : 'default'}>
-          {badge === 1 ? 'Senior' : badge === 2 ? 'Junior' : 'Fresher'}
-        </Label>
-      ),
-      hideInSearch: true,
-    },
-    {
-      title: 'Vai trò',
-      dataIndex: 'roleId',
-      render: (role: any) => (
-        <Label color={role === 1 ? 'info' : role === 2 ? 'primary' : 'default'}>
-          {role === 1 ? 'Học viên' : role === 2 ? 'Giảng viên' : 'Admin'}
-        </Label>
-      ),
-      hideInSearch: true,
-    },
+      title: 'Ngày sinh',
+      index: 'dateOfBirth',
+      //Why dafug this is not showing up normally but then it works for the courses page
+      //and i had to do it like this!?!?!?
+      render: (data: any, record: any) => {
+        console.log('halppppppp: ' + record.dateOfBirth)
+        return record.dateOfBirth;
+      },
+    }
+    // {
+    //   title: 'Email',
+    //   dataIndex: 'email',
+    // },
+    // {
+    //   title: 'Số điện thoại',
+    //   dataIndex: 'phone',
+    // },
+    // {
+    //   title: 'Thứ hạng',
+    //   dataIndex: 'badge',
+    //   render: (badge: any) => (
+    //     <Label color={badge === 1 ? 'info' : badge === 2 ? 'primary' : 'default'}>
+    //       {badge === 1 ? 'Senior' : badge === 2 ? 'Junior' : 'Fresher'}
+    //     </Label>
+    //   ),
+    //   hideInSearch: true,
+    // },
+    // {
+    //   title: 'Vai trò',
+    //   dataIndex: 'roleId',
+    //   render: (role: any) => (
+    //     <Label color={role === 1 ? 'info' : role === 2 ? 'primary' : 'default'}>
+    //       {role === 1 ? 'Học viên' : role === 2 ? 'Giảng viên' : 'Admin'}
+    //     </Label>
+    //   ),
+    //   hideInSearch: true,
+    // },
     // {
     //   title: translate('common.table.isAvailable'),
     //   dataIndex: 'status',
@@ -328,7 +339,7 @@ const UserListPage = () => {
           onDelete={deleteSubjectHandler}
           title={
             <>
-              {translate('common.confirmDeleteTitle')} <strong>{currentItem?.firstName}</strong>
+              {translate('common.confirmDeleteTitle')} <strong>{currentItem?.fullName}</strong>
             </>
           }
         />,
@@ -370,7 +381,7 @@ const UserListPage = () => {
                 navigate(`${PATH_DASHBOARD.users.root}/${user.id}`);
                 setIsUpdate(true);
               }}
-              getData={userApi.getUsers}
+              getData={studentApi.getStudents}
               onDelete={setCurrentItem}
               columns={columns}
             />

@@ -33,12 +33,9 @@ import { useSnackbar } from 'notistack';
 import { useEffect, useRef, useState } from 'react';
 // components
 import { useNavigate } from 'react-router-dom';
-import userApi from 'apis/user';
-import mentorApi from 'apis/mentor';
+import studentApi from 'apis/user';
 import { PATH_DASHBOARD } from 'routes/paths';
 import { TUser } from 'types/user';
-import { TMentor } from 'types/user';
-import { TStudent } from 'types/user';
 import { FormProvider, useForm, UseFormReturn } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -137,7 +134,7 @@ const AdminListPage = () => {
   // }, [data, reset]);
 
   const deleteSubjectHandler = () =>
-    userApi
+    studentApi
       .delete(currentItem?.id!)
       .then(() => setCurrentItem(null))
       .then(() => ref.current?.reload)
@@ -153,8 +150,8 @@ const AdminListPage = () => {
         });
       });
 
-  const updateCourseHandler = (user: TStudent) =>
-    userApi
+  const updateCourseHandler = (user: TUser) =>
+    studentApi
       .update(user!)
       .then(() => ref.current?.reload)
       .then(() =>
@@ -337,7 +334,7 @@ const AdminListPage = () => {
           onDelete={deleteSubjectHandler}
           title={
             <>
-              {translate('common.confirmDeleteTitle')} <strong>{currentItem?.firstName}</strong>
+              {translate('common.confirmDeleteTitle')} <strong>{currentItem?.fullName}</strong>
             </>
           }
         />,
@@ -355,7 +352,7 @@ const AdminListPage = () => {
               navigate(`${PATH_DASHBOARD.admins.root}/${user.id}`);
               setIsUpdate(true);
             }}
-            getData={mentorApi.getUsers}
+            getData={studentApi.getStudents}
             onDelete={setCurrentItem}
             columns={columns}
           />
