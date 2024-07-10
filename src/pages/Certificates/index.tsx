@@ -336,7 +336,7 @@ const CertificateListPage = () => {
           onDelete={deleteSubjectHandler}
           title={
             <>
-              {translate('common.confirmDeleteTitle')} <strong>{currentItem?.fullName}</strong>
+              {translate('common.confirmDeleteTitle')} <strong>{currentItem?.firstName}</strong>
             </>
           }
         />,

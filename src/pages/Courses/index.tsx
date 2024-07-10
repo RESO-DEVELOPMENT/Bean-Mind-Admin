@@ -250,24 +250,26 @@ const CourseListPage = () => {
   const columns = [
     {
       title: 'STT',
-      dataIndex: 'id',
+      dataIndex: 'index',
       hideInSearch: true,
     },
     {
       title: 'Chủ đề',
       dataIndex: 'title',
     },
-    {
-      title: 'Mô tả',
-      dataIndex: 'description',
-    },
+    // {
+    //   title: 'Mô tả',
+    //   dataIndex: 'description',
+    // },
     {
       title: 'Ngày bắt đầu',
       dataIndex: 'startDate',
+      valueType: 'datetime',
     },
     {
       title: 'Ngày kết thúc',
       dataIndex: 'endDate',
+      valueType: 'datetime',
     },
     {
       title: translate('common.table.isAvailable'),
@@ -355,18 +357,18 @@ const CourseListPage = () => {
     //   valueType: 'time',
     //   hideInTable: true,
     // },
-    {
-      title: 'Ngày bắt đầu',
-      dataIndex: 'startDate',
-      valueType: 'datetime',
-      hideInSearch: true,
-    },
-    {
-      title: 'Ngày kết thúc',
-      dataIndex: 'finishDate',
-      valueType: 'datetime',
-      hideInSearch: true,
-    },
+    //  {
+    //   title: 'Ngày bắt đầu',
+    //   dataIndex: 'startDate',
+    //   valueType: 'datetime',
+    //   hideInSearch: true,
+    // },
+    // {
+    //   title: 'Ngày kết thúc',
+    //   dataIndex: 'finishDate',
+    //   valueType: 'datetime',
+    //   hideInSearch: true,
+    // },
     // {
     //   title: 'Ngày cập nhật',
     //   dataIndex: 'updateDate',
@@ -416,7 +418,7 @@ const CourseListPage = () => {
           onDelete={deleteSubjectHandler}
           title={
             <>
-              {translate('common.confirmDeleteTitle')} <strong>{currentItem?.name}</strong>
+              {translate('common.confirmDeleteTitle')} <strong>{currentItem?.title}</strong>
             </>
           }
         />

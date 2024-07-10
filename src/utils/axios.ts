@@ -37,11 +37,13 @@ const parseParams = (params: any) => {
   return options ? options.slice(0, -1) : options;
 };
 
+const accessToken = JSON.parse(localStorage.getItem("accessToken") || "").accessToken;
+
 const request = axios.create({
   baseURL: process.env.REACT_APP_BASE_URL,
   paramsSerializer: parseParams,
   withCredentials: false,
-  headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}`,  'Access-Control-Allow-Origin': '*'  },
+  headers: { Authorization: `Bearer ${accessToken}`,  'Access-Control-Allow-Origin': '*'  },
 
 });
 

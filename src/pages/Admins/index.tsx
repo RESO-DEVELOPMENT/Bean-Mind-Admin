@@ -334,7 +334,7 @@ const AdminListPage = () => {
           onDelete={deleteSubjectHandler}
           title={
             <>
-              {translate('common.confirmDeleteTitle')} <strong>{currentItem?.fullName}</strong>
+              {translate('common.confirmDeleteTitle')} <strong>{currentItem?.firstName}</strong>
             </>
           }
         />,
@@ -352,7 +352,7 @@ const AdminListPage = () => {
               navigate(`${PATH_DASHBOARD.admins.root}/${user.id}`);
               setIsUpdate(true);
             }}
-            getData={userApi.getUsers}
+            getData={userApi.getMentors}
             onDelete={setCurrentItem}
             columns={columns}
           />
