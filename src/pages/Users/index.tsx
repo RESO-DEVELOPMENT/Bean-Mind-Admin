@@ -343,6 +343,19 @@ const UserListPage = () => {
             </>
           }
         />,
+        <Button
+          key="create-student"
+          onClick={() => {
+            navigate(PATH_DASHBOARD.users.new);
+            //setFormModal(true);
+            setCurrentItem(null);
+            //handleCreateSubject();
+          }}
+          variant="contained"
+          startIcon={<Icon icon={plusFill} />}
+        >
+          {translate('studentPages.users.addBtn')}
+        </Button>,
       ]}
     >
       <Card>

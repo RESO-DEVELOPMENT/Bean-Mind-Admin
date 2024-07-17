@@ -372,8 +372,8 @@ const SubjectListPage = () => {
     >
       <SubjectForm
         open={formModal}
-        subject_id={currentUpdateItem?.id}
-        //subject_id={currentUpdateItem ? currentUpdateItem.id : undefined}
+        //subject_id={currentUpdateItem?.id}
+        subject_id={currentUpdateItem ? currentUpdateItem.id : undefined}
         onAdd={addSubjectHandler}
         onEdit={updateSubjectHandler}
         onClose={() => setFormModal(false)}

@@ -74,6 +74,12 @@ const vn = {
       addBtn: 'Tạo môn học',
     },
   },
+  studentPages: {
+    users: {
+      listTitle: 'Học Sinh',
+      addBtn: 'Thêm Học Sinh',
+    },
+  },
 };
 
 export default vn;
