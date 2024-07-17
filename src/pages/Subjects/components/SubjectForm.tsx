@@ -25,7 +25,7 @@ interface Props extends Omit<Partial<DialogProps>, 'title'> {
   // onOk: () => Promise<any>;
   children?: ReactNode;
   subject_id?: string;
-  onAdd?: (data: TSubject) => Promise<any>;
+  onAdd?: (data: TSubject, courseId?: string) => Promise<any>; // Update onAdd type
   onEdit?: (data: any) => Promise<any>;
   onClose: () => any;
 }
@@ -60,6 +60,8 @@ const SubjectForm: React.FC<Props> = ({
 
   const schema = yup.object().shape({
     name: yup.string().required('Vui lòng nhập tên môn học'),
+    description: yup.string().required('Vui lòng nhập mô tả môn học'),
+    subjectCode: yup.string().required('Vui lòng nhập mã môn học'),
   });
   const form = useForm<TSubject>({
     resolver: yupResolver(schema),

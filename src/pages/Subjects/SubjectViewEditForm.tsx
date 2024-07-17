@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import { TSubject } from 'types/subject';
 import subjectApi from 'apis/subject';
-import { Grid, Card, Box, Typography, Stack, styled } from '@mui/material';
+import { Grid, Card, Box, Typography, Stack, styled, Autocomplete, CircularProgress, TextField } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { useForm } from 'react-hook-form';
 import { FormProvider, RHFEditor, RHFTextField } from 'components/hook-form';
@@ -27,6 +27,8 @@ import { PATH_DASHBOARD } from 'routes/paths';
 import { fData } from 'utils/formatNumber';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { storage } from 'config';
+import courseApi from 'apis/course';
+import { TCourse } from 'types/course';
 
 // interface ViewEditSubjectFormProps {
 //   subjectId: string;
@@ -54,6 +56,7 @@ const ViewEditSubjectForm: React.FC = () => {
       id: '',
       title: '',
       description: '',
+      subjectCode: '',
       courseId: '',
       insDate: '',
       updDate: '',
@@ -102,6 +105,7 @@ const ViewEditSubjectForm: React.FC = () => {
           setValue('id', data.id);
           setValue('title', data.title);
           setValue('description', data.description);
+          setValue('subjectCode', data.subjectCode);
           setValue('courseId', data.courseId);
           setValue('insDate', data.insDate);
           setValue('updDate', data.updDate);
@@ -116,11 +120,55 @@ const ViewEditSubjectForm: React.FC = () => {
     fetchSubject();
   }, [id, setValue]);
 
+  //------------------------------------------------------
+  //Get list of subjects
+  const { data: subjectsData, isLoading: subjectsLoading } = useQuery(
+    'subjects',
+    subjectApi.getSubjects
+  );
+  // Access 'items' from subjectsData.data to get the titles
+  const options = subjectsData?.data.items.map((subject: TSubject) => subject.title) || [];
+
+  // Fetch courses using useQuery
+  const { data: coursesData, isLoading: coursesLoading } = useQuery(
+    'courses',
+    courseApi.getCourses
+  );
+
+  // Prepare options for Autocomplete
+  const courseOptions = coursesData?.data.items.map((course: TCourse) => ({
+    label: course.title, // Display course title
+    value: course.id    // Store course ID as value
+  })) || [];
+
+  // State to store the selected course ID
+  const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
+
+  const handleCourseChange = (event: any, newValue: any | null) => {
+    if (newValue) {
+      setSelectedCourseId(newValue.value); // Set the selected course ID
+      setValue('courseId', newValue.value);
+    } else {
+      setSelectedCourseId(null);
+      setValue('courseId', '');
+    }
+  };
+
+  // const handleCourseChange = (
+  //   event: React.SyntheticEvent,
+  //   newValue: any | null
+  // ) => {
+  //   // Update the selected course ID when a new course is selected
+  //   setSelectedCourseId(newValue ? newValue.id : null); 
+  // };
+
+  //------------------------------------------------------------------------------
+
   const onSubmit = async (data: TSubject) => {
     setLoading(true);
     setError(null);
     try {
-      await subjectApi.update(data.id, data);
+      await subjectApi.update(data.id, data, selectedCourseId ? selectedCourseId : undefined);
       alert('Subject updated successfully');
     } catch (err) {
       setError('Failed to update subject');
@@ -190,6 +238,25 @@ const ViewEditSubjectForm: React.FC = () => {
                   }}
                 >
                   <RHFTextField name="title" label="Title" />
+                  {coursesLoading && <CircularProgress />}
+                  {coursesData && (
+                    <>
+                      <Autocomplete
+                        options={courseOptions}
+                        onChange={handleCourseChange}
+                        renderInput={(params) => (
+                          <TextField {...params} required name="courseId" label="Select Course" variant="outlined" />
+                        )}
+                      />
+
+                      {/* Display the selected course ID */}
+                      {selectedCourseId && (
+                        <p>Selected Course ID: {selectedCourseId}</p>
+                      )}
+                    </>
+                  )}
+                  {/* <RHFTextField name="courseId" label="Select Course" /> */}
+                  {/* <RHFTextField name="subjectCode" label="SubjectCode" /> */}
                   {/* <RHFTextField name="description" label="Description" /> */}
                   <RHFTextField
                     name="description"

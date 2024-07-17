@@ -195,7 +195,7 @@ function UserEditForm() {
                 { name: `${translate('dashboard')}`, href: PATH_DASHBOARD.root },
                 {
                   name: `Người dùng`,
-                  href: PATH_DASHBOARD.courses.root,
+                  href: PATH_DASHBOARD.users.root,
                 },
                 { name: `${user?.fullName}` },
               ]}

@@ -58,7 +58,28 @@ const SubjectListPage = () => {
   const { id } = useParams();
   console.log(id);
 
+  //-------------Testing for adding subject--------------------
+  const handleCreateSubject = async () => {
+    try {
+      const newSubject = {
+        title: 't5',
+        description: 't5',
+        subjectCode: 't5',
+        courseId: 'b38e3649-be10-4d5e-b856-7c58251458f6',
+      };
+
+      await subjectApi.add(newSubject, newSubject.courseId);
+      // You might want to show a success message or reload the table here
+      console.log('Subject created successfully!');
+    } catch (error) {
+      console.error('Error creating subject:', error);
+      // Handle the error appropriately, e.g., show an error message
+    }
+  };
+  //-------------End of Testing--------------
+
   //------------------------------------------------------
+  //The following section is to test 
   //Get list of subjects
   const { data: subjectsData, isLoading: subjectsLoading } = useQuery(
     'subjects',
@@ -117,22 +138,61 @@ const SubjectListPage = () => {
       });
   };
 
-  const addSubjectHandler = async (subject: TSubject) => {
-    await subjectApi
-      .add(subject!)
-      .then(tableRef.current?.reload)
-      .then(() =>
-        enqueueSnackbar(`Tạo thành công`, {
-          variant: 'success',
-        })
-      )
-      .catch((err: any) => {
-        const errMsg = get(err.response, ['data', 'message'], `Có lỗi xảy ra. Vui lòng thử lại`);
-        enqueueSnackbar(errMsg, {
-          variant: 'error',
-        });
+  // const addSubjectHandler = async (subject: TSubject) => {
+  //   await subjectApi
+  //     .add(subject!)
+  //     .then(tableRef.current?.reload)
+  //     .then(() =>
+  //       enqueueSnackbar(`Tạo thành công`, {
+  //         variant: 'success',
+  //       })
+  //     )
+  //     .catch((err: any) => {
+  //       const errMsg = get(err.response, ['data', 'message'], `Có lỗi xảy ra. Vui lòng thử lại`);
+  //       enqueueSnackbar(errMsg, {
+  //         variant: 'error',
+  //       });
+  //     });
+  // };
+  // const addSubjectHandler = async (subject: TSubject, selectedCourseId?: string) => {
+  //   await subjectApi
+  //     .add(subject, selectedCourseId ? selectedCourseId : undefined)  // Pass courseId here
+  //     .then(tableRef.current?.reload)
+  //     .then(() =>
+  //       enqueueSnackbar(`Tạo thành công`, {
+  //         variant: 'success',
+  //       })
+  //     )
+  //     .catch((err: any) => {
+  //       const errMsg = get(err.response, ['data', 'message'], `Có lỗi xảy ra. Vui lòng thử lại`);
+  //       enqueueSnackbar(errMsg, {
+  //         variant: 'error',
+  //       });
+  //     });
+  // };
+  const addSubjectHandler = async (subjectData: any) => {
+    try {
+      const newSubject = {
+        title: subjectData.name,
+        description: subjectData.description,
+        subjectCode: subjectData.subjectCode,
+        ...(selectedCourseId && { courseId: selectedCourseId }),
+      };
+
+      await subjectApi.add(newSubject, newSubject.courseId);
+      tableRef.current?.reload();
+      enqueueSnackbar(`Tạo thành công`, {
+        variant: 'success',
       });
+    } catch (err: any) {
+      const errMsg = get(err.response, ['data', 'message'], `Có lỗi xảy ra. Vui lòng thử lại`);
+      enqueueSnackbar(errMsg, {
+        variant: 'error',
+      });
+    }
   };
+
+
 
   /*const updateSubjectHandler = async (subject: any) => {
     const updateSubject = currentUpdateItem;
@@ -159,10 +219,14 @@ const SubjectListPage = () => {
     const updatedSubject: Partial<TSubject> = {
       title: subject.name,
       description: subject.description,
+      subjectCode: subject.subjectCode,
+      courseId: selectedCourseId,
       // Include other fields you want to update
     };
     await subjectApi
-      .update(currentUpdateItem!.id, updatedSubject) // Pass the ID and updated data
+      .update(currentUpdateItem!.id,
+        updatedSubject,
+        selectedCourseId ? selectedCourseId : undefined) // Pass the ID and updated data
       .then(tableRef.current?.reload)
       .then(() =>
         enqueueSnackbar(`Cập nhật thành công`, {
@@ -297,6 +361,7 @@ const SubjectListPage = () => {
             navigate(PATH_DASHBOARD.subjects.new);
             setFormModal(true);
             setCurrentUpdateItem(null);
+            //handleCreateSubject();
           }}
           variant="contained"
           startIcon={<Icon icon={plusFill} />}
@@ -307,22 +372,22 @@ const SubjectListPage = () => {
     >
       <SubjectForm
         open={formModal}
-        //subject_id={currentUpdateItem?.id}
-        subject_id={currentUpdateItem ? currentUpdateItem.id : undefined}
+        subject_id={currentUpdateItem?.id}
+        //subject_id={currentUpdateItem ? currentUpdateItem.id : undefined}
         onAdd={addSubjectHandler}
         onEdit={updateSubjectHandler}
         onClose={() => setFormModal(false)}
       >
         <Grid container spacing={2}>
           <Grid item xs={6}>
-          {coursesLoading && <CircularProgress />}
+            {coursesLoading && <CircularProgress />}
             {coursesData && (
               <>
                 <Autocomplete
                   options={courseOptions}
                   onChange={handleCourseChange}
                   renderInput={(params) => (
-                    <TextField {...params} required label="Select Course" variant="outlined" />
+                    <TextField {...params} required name="courseId" label="Select Course" variant="outlined" />
                   )}
                 />
 
@@ -336,14 +401,8 @@ const SubjectListPage = () => {
               defaultValue={currentUpdateItem?.title || ''} />
             <InputField fullWidth required name="description" label="Chi tiết môn học"
               defaultValue={currentUpdateItem?.description || ''} />
-            {/* {subjectsLoading && <CircularProgress />}
-            {subjectsData && (
-              <Autocomplete
-                options={options}
-                renderInput={(params) =>
-                  <TextField {...params} label="Combo box" variant="outlined" />}
-              />
-            )} */}
+            <InputField fullWidth required name="subjectCode" label="Mã môn học"
+              defaultValue={currentUpdateItem?.description || ''} />
           </Grid>
         </Grid>
       </SubjectForm>
