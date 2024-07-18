@@ -135,10 +135,16 @@ function UserEditForm() {
     return option;
   };
 
+  //placeholder
   const onSubmit = async (user: TMentee) => {
     try {
+      //placeholder logic
+      const userId = user.id;
+      const parentId = user.parentId !== null ? user.parentId : undefined;
+      const courseId = '';
+
       await studentApi
-        .update(user!)
+        .update(userId, user, parentId, courseId)
         .then(() =>
           enqueueSnackbar(`Cập nhât thành công`, {
             variant: 'success',

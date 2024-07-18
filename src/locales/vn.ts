@@ -16,7 +16,7 @@ const vn = {
     documentation: `tài liệu`,
   },
   dashboard: `Trang chủ`,
-  app: `ứng dụng`,
+  app: `Trang chủ`,
   user: `người dùng`,
   list: `Danh sách`,
   edit: `chỉnh sửa`,

@@ -48,32 +48,26 @@ const navConfig = [
   {
     subheader: 'management',
     items: [
-      // ORDER
-      {
-        title: 'Đơn hàng',
-        path: PATH_DASHBOARD.orders.list,
-        icon: ICONS.ecommerce,
-      },
       // COURSE
       {
         title: 'Khóa học',
         path: PATH_DASHBOARD.courses.list,
         icon: ICONS.libraryBook,
       },
-      {
-        title: 'Chứng chỉ',
-        path: PATH_DASHBOARD.certificates.list,
-        icon: ICONS.invoice,
-      },
+      // {
+      //   title: 'Chứng chỉ',
+      //   path: PATH_DASHBOARD.certificates.list,
+      //   icon: ICONS.invoice,
+      // },
       // MENTOR
       {
-        title: 'mentor',
+        title: 'Giảng Viên',
         path: PATH_DASHBOARD.mentors.list,
         icon: ICONS.user,
       },
       // USER
       {
-        title: 'mentee',
+        title: 'Học Sinh',
         path: PATH_DASHBOARD.users.list,
         icon: ICONS.user,
       },
@@ -84,13 +78,13 @@ const navConfig = [
     items: [
       // MAJOR
       {
-        title: 'Chuyên ngành',
+        title: 'Chươnng Trình Học',
         path: PATH_DASHBOARD.majors.list,
         icon: ICONS.menuBook,
       },
       // SUBJECT
       {
-        title: 'subject',
+        title: 'Môn Học',
         path: PATH_DASHBOARD.subjects.list,
         icon: ICONS.menuItem,
       },

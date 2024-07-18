@@ -130,21 +130,41 @@ const UserListPage = () => {
         });
       });
 
-  const updateCourseHandler = (user: TMentee) =>
+  // const updateCourseHandler = (user: TMentee) =>
+  //   studentApi
+  //     .update(user!)
+  //     .then(() => ref.current?.reload)
+  //     .then(() =>
+  //       enqueueSnackbar(`Cập nhât thành công`, {
+  //         variant: 'success',
+  //       })
+  //     )
+  //     .catch((err: any) => {
+  //       const errMsg = get(err.response, ['data', 'message'], `Có lỗi xảy ra. Vui lòng thử lại`);
+  //       enqueueSnackbar(errMsg, {
+  //         variant: 'error',
+  //       });
+  //     });
+  const updateCourseHandler = (user: TMentee) => {
+    // Placeholder for update logic
+    const parentId = user.parentId !== null ? user.parentId : undefined;
+    const courseId = '';
+  
     studentApi
-      .update(user!)
+      .update(user.id, user, parentId, courseId)  // Pass id, data, and optional parameters
       .then(() => ref.current?.reload)
-      .then(() =>
-        enqueueSnackbar(`Cập nhât thành công`, {
+      .then(() => {
+        enqueueSnackbar(`Cập nhật thành công`, {
           variant: 'success',
-        })
-      )
+        });
+      })
       .catch((err: any) => {
         const errMsg = get(err.response, ['data', 'message'], `Có lỗi xảy ra. Vui lòng thử lại`);
         enqueueSnackbar(errMsg, {
           variant: 'error',
         });
       });
+  };
 
   const columns = [
     {
@@ -175,7 +195,7 @@ const UserListPage = () => {
       //Why dafug this is not showing up normally but then it works for the courses page
       //and i had to do it like this!?!?!?
       render: (data: any, record: any) => {
-        console.log('halppppppp: ' + record.dateOfBirth)
+        // console.log('halppppppp: ' + record.dateOfBirth)
         return record.dateOfBirth;
       },
     }

@@ -8,9 +8,31 @@ const getStudentById = (id: string, params?: any) => request.get(`/students/${id
 
 const remove = (id: string) => request.delete(`/students/${id}`);
 
-const add = (data: any) => request.post('/students', data);
+//const add = (data: any) => request.post('/students', data);
+const add = (data: any, parentId?: string, courseId?: string) =>
+  request.post(
+    '/students',
+    data,
+    {
+      params: {
+        parentId,
+        courseId,
+      },
+    }
+  );
 
-const update = (data: TMentee) => request.put(`/students`, data);
+//const update = (data: TMentee) => request.put(`/students`, data);
+const update = (id: string, data: Partial<TMentee>, parentId?: string, courseId?: string) =>
+  request.patch(
+    `/students/${id}`,
+    data, 
+    {
+      params: {
+        parentId,
+        courseId
+      }
+    }
+  );
 
 const studentApi = {
   ...generateAPIWithPaging<TMentee>('students'),

@@ -8,7 +8,7 @@ export type TUser = {
   phone: string;
   email: string;
   address: string;
-  dateOfBirth: Date;
+  dateOfBirth: string;
   status: number;
   badge: number;
   roleId: number;
@@ -19,8 +19,8 @@ export type TMentor = {
   fullName: string;
   firstName: string;
   lastName: string;
-  dateOfBirth: Date;
-  imageUrl: string;
+  dateOfBirth: string;
+  imageUrl?: string | null;
   email: string;
   phone: string;
   //schoolId: string;
@@ -41,7 +41,7 @@ export type TMentee = {
   firstName: string;
   lastName: string;
   fullName: string;
-  dateOfBirth: Date;
+  dateOfBirth: string;
   imgUrl: string;
   parentId?: string | null;
   accountId?: string | null;
@@ -57,10 +57,11 @@ export type TAdmin = {
   lastName: string;
   gender: number;
   imgUrl: string;
+  accountId: string;
   phone: string;
   email: string;
   address: string;
-  dateOfBirth: Date; //changed
+  dateOfBirth: string;
   status: number;
   badge: number;
   roleId: number;

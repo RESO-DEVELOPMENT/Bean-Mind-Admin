@@ -19,6 +19,7 @@ import { fData } from 'utils/formatNumber';
 import * as yup from 'yup';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { storage } from 'config';
+import teacherApi from 'apis/mentor';
 
 // ----------------------------------------------------------------------
 
@@ -137,7 +138,7 @@ function AdminEditForm() {
 
   const onSubmit = async (user: TAdmin) => {
     try {
-      await studentApi
+      await teacherApi
         .update(user!)
         .then(() =>
           enqueueSnackbar(`Cập nhât thành công`, {
