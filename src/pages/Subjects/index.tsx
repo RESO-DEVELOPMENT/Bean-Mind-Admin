@@ -1,49 +1,34 @@
 /* eslint-disable camelcase */
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Icon } from '@iconify/react';
-// material
 import {
   Autocomplete,
   Button,
   Card,
   CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   Grid,
   Stack,
   TextField,
   Typography,
+  Box,
+  CardActionArea,
 } from '@mui/material';
 import DeleteConfirmDialog from 'components/DeleteConfirmDialog';
-import { InputField, SelectField } from 'components/form';
-import Label from 'components/Label';
+import InputField from 'components/form/InputField';
 import Page from 'components/Page';
-import ResoTable from 'components/ResoTable/ResoTable';
 import useLocales from 'hooks/useLocales';
 import { get } from 'lodash';
 import { useSnackbar } from 'notistack';
 import { useEffect, useRef, useState } from 'react';
-// components
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import subjectApi from 'apis/subject';
 import { PATH_DASHBOARD } from 'routes/paths';
 import { TSubject } from 'types/subject';
 import SubjectForm from './components/SubjectForm';
-import { FormProvider, useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 import HeaderBreadcrumbs from 'components/HeaderBreadcrumbs';
-import Iconify from 'components/Iconify';
 import { useQuery } from 'react-query';
-import { useParams } from 'react-router';
-import LoadingAsyncButton from 'components/LoadingAsyncButton';
-//tmp
 import courseApi from 'apis/course';
 import { TCourse } from 'types/course';
-
 
 const SubjectListPage = () => {
   const navigate = useNavigate();
@@ -52,124 +37,46 @@ const SubjectListPage = () => {
   const [currentDeleteItem, setCurrentDeleteItem] = useState<TSubject | null>(null);
   const [currentUpdateItem, setCurrentUpdateItem] = useState<TSubject | null>(null);
   const [formModal, setFormModal] = useState(false);
-  const tableRef = useRef<any>();
 
   const [isUpdate, setIsUpdate] = useState(false);
   const { id } = useParams();
-  console.log(id);
 
-  //-------------Testing for adding subject--------------------
-  const handleCreateSubject = async () => {
-    try {
-      const newSubject = {
-        title: 't5',
-        description: 't5',
-        subjectCode: 't5',
-        courseId: 'b38e3649-be10-4d5e-b856-7c58251458f6',
-      };
-
-      await subjectApi.add(newSubject, newSubject.courseId);
-      // You might want to show a success message or reload the table here
-      console.log('Subject created successfully!');
-    } catch (error) {
-      console.error('Error creating subject:', error);
-      // Handle the error appropriately, e.g., show an error message
-    }
-  };
-  //-------------End of Testing--------------
-
-  //------------------------------------------------------
-  //The following section is to test 
-  //Get list of subjects
+  // Subjects Data
   const { data: subjectsData, isLoading: subjectsLoading } = useQuery(
     'subjects',
     subjectApi.getSubjects
   );
-  // Access 'items' from subjectsData.data to get the titles
-  const options = subjectsData?.data.items.map((subject: TSubject) => subject.title) || [];
 
-  // Fetch courses using useQuery
+  // Courses Data
+  const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
   const { data: coursesData, isLoading: coursesLoading } = useQuery(
     'courses',
     courseApi.getCourses
   );
 
-  // Prepare options for Autocomplete
   const courseOptions = coursesData?.data.items.map((course: TCourse) => ({
-    label: course.title, // Display course title
-    value: course.id    // Store course ID as value
+    label: course.title,
+    value: course.id,
   })) || [];
 
-  // State to store the selected course ID
-  const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
-
   const handleCourseChange = (event: any, newValue: any | null) => {
-    if (newValue) {
-      setSelectedCourseId(newValue.value); // Set the selected course ID
-    } else {
-      setSelectedCourseId(null);
+    setSelectedCourseId(newValue ? newValue.value : null);
+  };
+
+  // Delete Subject
+  const deleteSubjectHandler = async () => {
+    try {
+      await subjectApi.delete(currentDeleteItem?.id!);
+      enqueueSnackbar(`Xóa thành công`, { variant: 'success' });
+    } catch (err: any) {
+      const errMsg = get(err.response, ['data', 'message'], `Có lỗi xảy ra. Vui lòng thử lại`);
+      enqueueSnackbar(errMsg, { variant: 'error' });
+    } finally {
+      setCurrentDeleteItem(null);
     }
   };
 
-  // const handleCourseChange = (
-  //   event: React.SyntheticEvent,
-  //   newValue: any | null
-  // ) => {
-  //   // Update the selected course ID when a new course is selected
-  //   setSelectedCourseId(newValue ? newValue.id : null); 
-  // };
-
-  //------------------------------------------------------------------------------
-  const deleteSubjectHandler = async () => {
-    await subjectApi
-      .delete(currentDeleteItem?.id!)
-      .then(() => setCurrentDeleteItem(null))
-      .then(tableRef.current?.reload)
-      .then(() =>
-        enqueueSnackbar(`Xóa thành công`, {
-          variant: 'success',
-        })
-      )
-      .catch((err: any) => {
-        const errMsg = get(err.response, ['data', 'message'], `Có lỗi xảy ra. Vui lòng thử lại`);
-        enqueueSnackbar(errMsg, {
-          variant: 'error',
-        });
-      });
-  };
-
-  // const addSubjectHandler = async (subject: TSubject) => {
-  //   await subjectApi
-  //     .add(subject!)
-  //     .then(tableRef.current?.reload)
-  //     .then(() =>
-  //       enqueueSnackbar(`Tạo thành công`, {
-  //         variant: 'success',
-  //       })
-  //     )
-  //     .catch((err: any) => {
-  //       const errMsg = get(err.response, ['data', 'message'], `Có lỗi xảy ra. Vui lòng thử lại`);
-  //       enqueueSnackbar(errMsg, {
-  //         variant: 'error',
-  //       });
-  //     });
-  // };
-  // const addSubjectHandler = async (subject: TSubject, selectedCourseId?: string) => {
-  //   await subjectApi
-  //     .add(subject, selectedCourseId ? selectedCourseId : undefined)  // Pass courseId here
-  //     .then(tableRef.current?.reload)
-  //     .then(() =>
-  //       enqueueSnackbar(`Tạo thành công`, {
-  //         variant: 'success',
-  //       })
-  //     )
-  //     .catch((err: any) => {
-  //       const errMsg = get(err.response, ['data', 'message'], `Có lỗi xảy ra. Vui lòng thử lại`);
-  //       enqueueSnackbar(errMsg, {
-  //         variant: 'error',
-  //       });
-  //     });
-  // };
+  // Add Subject 
   const addSubjectHandler = async (subjectData: any) => {
     try {
       const newSubject = {
@@ -180,167 +87,46 @@ const SubjectListPage = () => {
       };
 
       await subjectApi.add(newSubject, newSubject.courseId);
-      tableRef.current?.reload();
-      enqueueSnackbar(`Tạo thành công`, {
-        variant: 'success',
-      });
+      enqueueSnackbar(`Tạo thành công`, { variant: 'success' });
     } catch (err: any) {
-      const errMsg = get(err.response, ['data', 'message'], `Có lỗi xảy ra. Vui lòng thử lại`);
-      enqueueSnackbar(errMsg, {
-        variant: 'error',
-      });
+      const errMsg = get(
+        err.response,
+        ['data', 'message'],
+        `Có lỗi xảy ra. Vui lòng thử lại`
+      );
+      enqueueSnackbar(errMsg, { variant: 'error' });
     }
   };
 
-
-
-  /*const updateSubjectHandler = async (subject: any) => {
-    const updateSubject = currentUpdateItem;
-    updateSubject!.title = subject.name;
-    console.log("Subject id: ", updateSubject!.id);
-    console.log("Subject title: ", updateSubject!.title);
-    console.log('Update Subject:', updateSubject);
-    await subjectApi
-      .update(updateSubject!)
-      .then(tableRef.current?.reload)
-      .then(() =>
-        enqueueSnackbar(`Cập nhật thành công`, {
-          variant: 'success',
-        })
-      )
-      .catch((err: any) => {
-        const errMsg = get(err.response, ['data', 'message'], `Có lỗi xảy ra. Vui lòng thử lại`);
-        enqueueSnackbar(errMsg, {
-          variant: 'error',
-        });
-      });
-  };*/
+  // Update Subject
   const updateSubjectHandler = async (subject: any) => {
     const updatedSubject: Partial<TSubject> = {
       title: subject.name,
       description: subject.description,
       subjectCode: subject.subjectCode,
       courseId: selectedCourseId,
-      // Include other fields you want to update
     };
-    await subjectApi
-      .update(currentUpdateItem!.id,
+    try {
+      await subjectApi.update(
+        currentUpdateItem!.id,
         updatedSubject,
-        selectedCourseId ? selectedCourseId : undefined) // Pass the ID and updated data
-      .then(tableRef.current?.reload)
-      .then(() =>
-        enqueueSnackbar(`Cập nhật thành công`, {
-          variant: 'success',
-        })
-      )
-      .catch((err: any) => {
-        const errMsg = get(err.response, ['data', 'message'], `Có lỗi xảy ra. Vui lòng thử lại`);
-        enqueueSnackbar(errMsg, {
-          variant: 'error',
-        });
-      });
+        selectedCourseId ? selectedCourseId : undefined
+      );
+      enqueueSnackbar(`Cập nhật thành công`, { variant: 'success' });
+    } catch (err: any) {
+      const errMsg = get(
+        err.response,
+        ['data', 'message'],
+        `Có lỗi xảy ra. Vui lòng thử lại`
+      );
+      enqueueSnackbar(errMsg, { variant: 'error' });
+    }
   };
-
-  const columns = [
-    {
-      title: 'STT',
-      dataIndex: 'index',
-      hideInSearch: true,
-    },
-    {
-      title: 'Tên môn học',
-      dataIndex: 'title',
-    },
-    {
-      title: 'Mã môn',
-      dataIndex: 'subjectCode',
-    },
-    {
-      title: 'Mô tả',
-      dataIndex: 'description',
-    },
-    // {
-    //   title: 'ngày tạo',
-    //   dataIndex: 'insDate',
-    // }
-    // {
-    //   title: 'Xác thực',
-    //   dataIndex: 'isVerified',
-    //   hideInSearch: true,
-    //   render: (isVeri: any) => (
-    //     <Iconify
-    //       icon={isVeri ? 'eva:checkmark-circle-fill' : 'eva:clock-outline'}
-    //       sx={{
-    //         width: 20,
-    //         height: 20,
-    //         color: 'success.main',
-    //         ...(!isVeri && { color: 'warning.main' }),
-    //       }}
-    //     />
-    //   ),
-    // },
-    // {
-    //   title: 'Ngày',
-    //   // dataIndex: 'createdAt',
-    //   valueType: 'date',
-    //   hideInTable: true,
-    // },
-    // {
-    //   title: 'Giờ',
-    //   // dataIndex: 'createdAt',
-    //   valueType: 'time',
-    //   hideInTable: true,
-    // },
-    // {
-    //   title: 'Ngày update',
-    //   dataIndex: 'updatedDate',
-    //   valueType: 'datetime',
-    //   hideInSearch: true
-    // },
-    // {
-    //   title: 'Ngày phát hành',
-    //   dataIndex: 'publishedDate',
-    //   valueType: 'datetime',
-    //   hideInSearch: true
-    // },
-    // {
-    //   title: translate('common.table.isAvailable'),
-    //   dataIndex: 'isAvailable',
-    //   render: (isAvai: any) => (
-    //     <Label color={isAvai ? 'success' : 'default'}>
-    //       {isAvai ? translate('common.available') : translate('common.notAvailable')}
-    //     </Label>
-    //   ),
-    //   renderFormItem: () => (
-    //     <SelectField
-    //       fullWidth
-    //       sx={{ minWidth: '150px' }}
-    //       options={[
-    //         {
-    //           label: translate('common.all'),
-    //           value: '',
-    //         },
-    //         {
-    //           label: translate('common.available'),
-    //           value: 'true',
-    //         },
-    //         {
-    //           label: translate('common.unAvailable'),
-    //           value: 'false',
-    //         },
-    //       ]}
-    //       name="is-available"
-    //       size="small"
-    //       label={translate('common.table.isAvailable')}
-    //     />
-    //   ),
-    // },
-  ];
 
   return (
     <Page
       title={`${translate('pages.subjects.listTitle')}`}
-      isTable
+      isTable // Consider removing this if you are not using a table
       content={
         <HeaderBreadcrumbs
           heading=""
@@ -361,7 +147,6 @@ const SubjectListPage = () => {
             navigate(PATH_DASHBOARD.subjects.new);
             setFormModal(true);
             setCurrentUpdateItem(null);
-            //handleCreateSubject();
           }}
           variant="contained"
           startIcon={<Icon icon={plusFill} />}
@@ -370,9 +155,9 @@ const SubjectListPage = () => {
         </Button>,
       ]}
     >
+      {/* Subject Form Modal */}
       <SubjectForm
         open={formModal}
-        //subject_id={currentUpdateItem?.id}
         subject_id={currentUpdateItem ? currentUpdateItem.id : undefined}
         onAdd={addSubjectHandler}
         onEdit={updateSubjectHandler}
@@ -382,30 +167,49 @@ const SubjectListPage = () => {
           <Grid item xs={6}>
             {coursesLoading && <CircularProgress />}
             {coursesData && (
-              <>
-                <Autocomplete
-                  options={courseOptions}
-                  onChange={handleCourseChange}
-                  renderInput={(params) => (
-                    <TextField {...params} required name="courseId" label="Select Course" variant="outlined" />
-                  )}
-                />
-
-                {/* Display the selected course ID */}
-                {selectedCourseId && (
-                  <p>Selected Course ID: {selectedCourseId}</p>
+              <Autocomplete
+                options={courseOptions}
+                onChange={handleCourseChange}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    required
+                    name="courseId"
+                    label="Select Course"
+                    variant="outlined"
+                  />
                 )}
-              </>
+              />
             )}
-            <InputField fullWidth required name="name" label="Tên môn học"
-              defaultValue={currentUpdateItem?.title || ''} />
-            <InputField fullWidth required name="description" label="Chi tiết môn học"
-              defaultValue={currentUpdateItem?.description || ''} />
-            <InputField fullWidth required name="subjectCode" label="Mã môn học"
-              defaultValue={currentUpdateItem?.description || ''} />
+
+            {selectedCourseId && <p>Selected Course ID: {selectedCourseId}</p>}
+
+            <InputField
+              fullWidth
+              required
+              name="name"
+              label="Tên môn học"
+              defaultValue={currentUpdateItem?.title || ''}
+            />
+            <InputField
+              fullWidth
+              required
+              name="description"
+              label="Chi tiết môn học"
+              defaultValue={currentUpdateItem?.description || ''}
+            />
+            <InputField
+              fullWidth
+              required
+              name="subjectCode"
+              label="Mã môn học"
+              defaultValue={currentUpdateItem?.subjectCode || ''}
+            />
           </Grid>
         </Grid>
       </SubjectForm>
+
+      {/* Delete Confirmation Dialog */}
       <DeleteConfirmDialog
         key={''}
         open={Boolean(currentDeleteItem)}
@@ -417,88 +221,63 @@ const SubjectListPage = () => {
           </>
         }
       />
-      <Card>
-        {/* <Stack spacing={2}>
-          <ResoTable
-            rowKey="id"
-            ref={tableRef}
-            onEdit={(subject: TSubject) => {
-              navigate(`${PATH_DASHBOARD.subjects.root}/${subject.id}`);
-              setIsUpdate(true);
-              setFormModal(true);
-              setCurrentUpdateItem(subject);
-            }}
-            getData={subjectApi.getSubjects}
-            onDelete={setCurrentDeleteItem}
-            columns={columns}
-          />
-        </Stack> */}
-        <Stack spacing={2}>
-          <ResoTable
-            rowKey="id"
-            ref={tableRef}
-            onEdit={(subject: TSubject) => {
-              navigate(`${PATH_DASHBOARD.subjects.root}/${subject.id}`);
-              setIsUpdate(true);
-              setFormModal(true);
-              setCurrentUpdateItem(subject);
-            }}
-            onView={(subject: TSubject) => navigate(`${PATH_DASHBOARD.subjects.root}/${subject.id}/view`)}
-            getData={subjectApi.getSubjects}
-            onDelete={setCurrentDeleteItem}
-            columns={columns}
-          />
-        </Stack>
-      </Card>
 
-      {/* <Dialog
-        open={isUpdate}
-        fullWidth
-        onClose={() => setIsUpdate(false)}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">Cập nhật môn học</DialogTitle>
-        <DialogContent dividers>
-          <FormProvider {...subjectForm}>
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
-                <InputField fullWidth required name="name" label="Tên môn học" />
-              </Grid>
-            </Grid>
-          </FormProvider>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setIsUpdate(false)} variant="outlined" color="inherit">
-            {translate('common.cancel')}
-          </Button>
-          <LoadingAsyncButton
-            variant="contained"
-            onClick={async () => {
-              try {
-                await handleSubmit(
-                  (data: any) => subjectApi.update(data),
-                  (e: any) => {
-                    throw e;
-                  }
-                )();
-                enqueueSnackbar(`Cập nhật môn học thành công`, {
-                  variant: 'success',
-                });
-                setIsUpdate(false);
-                reset(data);
-                tableRef.current?.reload();
-                return true;
-              } catch (error) {
-                enqueueSnackbar('Có lỗi', { variant: 'error' });
-                return false;
-              }
-            }}
-          >
-            {translate('common.save')}
-          </LoadingAsyncButton>
-        </DialogActions>
-      </Dialog> */}
+      {/* Subject Cards Display */}
+      <Grid container spacing={2}> 
+        {subjectsData?.data.items.map((subject: TSubject) => (
+          <Grid item xs={12} sm={6} md={4} key={subject.id}>
+            <Card 
+              sx={{ 
+                border: '1px solid #D9D9D9', // Border styling
+                backgroundColor: '#FFFFFF', // Background color 
+                borderRadius: 2, // Add rounded corners (adjust value as needed) 
+                overflow: 'hidden', // Ensure rounded corners work properly
+                display: 'flex', // Enable flexbox for the card
+                flexDirection: 'column', // Stack title and content vertically
+              }}
+            >
+              <CardActionArea sx={{ height: '100%' }}> {/* Making the card clickable (optional) */}
+                <Box 
+                  sx={{ 
+                    backgroundImage: 'linear-gradient(to bottom, #e0e0e0, #ffffff)', 
+                    padding: 2, 
+                    borderBottom: '1px solid #ddd', 
+                    textAlign: 'center', // Center text within the title box
+                    height: { xs: 100, sm: 150, md: 200 }, // Adjust heights responsively.
+                    flexGrow: 2, // Title section can only take up 2/3 of the space
+                    display: 'flex', // Enable flexbox for the title box
+                    alignItems: 'center', // Center vertically
+                    justifyContent: 'center', // Center horizontally
+                  }}
+                >
+                  <Typography 
+                    variant="h6" 
+                    sx={{ 
+                      fontFamily: 'Segoe UI', 
+                      fontWeight: 'bold',
+                    }}
+                  > 
+                    {subject.title} 
+                  </Typography>
+                </Box>
+
+                <Box sx={{ padding: 2 }}> 
+                  <Typography 
+                    variant="body2" 
+                    color="text.secondary" 
+                    sx={{ fontFamily: 'sans-serif' }} // Sans-serif for description
+                  >
+                    {subject.subjectCode} <br />
+                    {subject.description}
+                  </Typography>
+
+                  {/* Your icons and text for students, videos, duration */}
+                </Box>
+              </CardActionArea>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
     </Page>
   );
 };
