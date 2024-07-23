@@ -2,18 +2,17 @@ import { TSubject } from 'types/subject';
 import { generateAPIWithPaging } from './utils';
 import request from 'utils/axios';
 
-const getSubjects = (params?: any) => request.get('/subjects', { params });
-//const getSubjects = () => request.get('/subjects');
+// const getSubjects = (params?: any) => request.get('/subjects', { params });
+const getSubjects = () => request.get('/subjects?page=1&size=100');
 
-const getSubjectById = (id: string) =>
-  request.get<TSubject>(`/subjects/${id}`);
+const getSubjectById = (id: string) => request.get<TSubject>(`/subjects/${id}`);
 
 const remove = (id: string) => request.delete(`/subjects/${id}`);
 
 //const add = (data: any) => request.post('/subjects', data);
 const add = (data: any, courseId?: string) => {
   const url = courseId ? `/subjects?courseId=${courseId}` : '/subjects';
-  return request.post(url, data); 
+  return request.post(url, data);
 };
 //const add = (id: string, params: any) => request.post(`/subjects/${courseId}`, data);
 //const add = (id: string, data: Partial<TSubject>) => request.post(`/subjects?Id=${Id}`, data);

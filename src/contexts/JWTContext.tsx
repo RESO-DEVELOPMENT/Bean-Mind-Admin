@@ -90,6 +90,9 @@ function AuthProvider({ children }: AuthProviderProps) {
         if (accessToken && isValidToken(accessToken)) {
           setSession(accessToken);
           const user = jwtDecode<AuthUser>(accessToken);
+          if (user) {
+            localStorage.setItem('acountId', user.AccountId);
+          }
 
           // const response = await request.get('/users/me');
           // const user = response?.data;
@@ -112,7 +115,6 @@ function AuthProvider({ children }: AuthProviderProps) {
             },
           });
         }
-
       } catch (err) {
         console.error(err);
         dispatch({

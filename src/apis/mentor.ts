@@ -4,7 +4,9 @@ import request from 'utils/axios';
 
 const getTeachers = (params?: any) => request.get('/teachers', { params });
 
-const getTeacherById = (id: string,  params?: any) => request.get(`/teachers/${id}`, { params });
+const getTeacherById = (id: string, params?: any) => request.get(`/teachers/${id}`, { params });
+
+const getTeacherBySubjectId = (id: string) => request.get(`/teacherteachablessubject/${id}`);
 
 const remove = (id: string) => request.delete(`/teachers/${id}`);
 
@@ -19,6 +21,7 @@ const teacherApi = {
   remove,
   add,
   update,
+  getTeacherBySubjectId,
 };
 
 export default teacherApi;
