@@ -33,9 +33,9 @@ import { useSnackbar } from 'notistack';
 import { useEffect, useRef, useState } from 'react';
 // components
 import { useNavigate } from 'react-router-dom';
-import userApi from 'apis/user';
+import studentApi from 'apis/user';
 import { PATH_DASHBOARD } from 'routes/paths';
-import { TUser } from 'types/user';
+import { TMentee, TUser } from 'types/user';
 import { FormProvider, useForm, UseFormReturn } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -134,7 +134,7 @@ const AdminListPage = () => {
   // }, [data, reset]);
 
   const deleteSubjectHandler = () =>
-    userApi
+    studentApi
       .delete(currentItem?.id!)
       .then(() => setCurrentItem(null))
       .then(() => ref.current?.reload)
@@ -150,21 +150,41 @@ const AdminListPage = () => {
         });
       });
 
-  const updateCourseHandler = (user: TUser) =>
-    userApi
-      .update(user!)
+  // const updateCourseHandler = (user: TUser) =>
+  //   studentApi
+  //     .update(user!)
+  //     .then(() => ref.current?.reload)
+  //     .then(() =>
+  //       enqueueSnackbar(`Cập nhât thành công`, {
+  //         variant: 'success',
+  //       })
+  //     )
+  //     .catch((err: any) => {
+  //       const errMsg = get(err.response, ['data', 'message'], `Có lỗi xảy ra. Vui lòng thử lại`);
+  //       enqueueSnackbar(errMsg, {
+  //         variant: 'error',
+  //       });
+  //     });
+  const updateCourseHandler = (user: TMentee) => {
+    // Placeholder for update logic
+    const parentId = user.parentId !== null ? user.parentId : undefined;
+    const courseId = '';
+  
+    studentApi
+      .update(user.id, user, parentId, courseId)  // Pass id, data, and optional parameters
       .then(() => ref.current?.reload)
-      .then(() =>
-        enqueueSnackbar(`Cập nhât thành công`, {
+      .then(() => {
+        enqueueSnackbar(`Cập nhật thành công`, {
           variant: 'success',
-        })
-      )
+        });
+      })
       .catch((err: any) => {
         const errMsg = get(err.response, ['data', 'message'], `Có lỗi xảy ra. Vui lòng thử lại`);
         enqueueSnackbar(errMsg, {
           variant: 'error',
         });
       });
+  };
 
   const columns = [
     {
@@ -352,7 +372,7 @@ const AdminListPage = () => {
               navigate(`${PATH_DASHBOARD.admins.root}/${user.id}`);
               setIsUpdate(true);
             }}
-            getData={userApi.getUsers}
+            getData={studentApi.getStudents}
             onDelete={setCurrentItem}
             columns={columns}
           />

@@ -24,8 +24,8 @@ interface Props extends Omit<Partial<DialogProps>, 'title'> {
   onCancle?: () => void;
   // onOk: () => Promise<any>;
   children?: ReactNode;
-  subject_id?: number;
-  onAdd?: (data: TSubject) => Promise<any>;
+  subject_id?: string;
+  onAdd?: (data: TSubject, courseId?: string) => Promise<any>; // Update onAdd type
   onEdit?: (data: any) => Promise<any>;
   onClose: () => any;
 }
@@ -60,6 +60,8 @@ const SubjectForm: React.FC<Props> = ({
 
   const schema = yup.object().shape({
     name: yup.string().required('Vui lòng nhập tên môn học'),
+    description: yup.string().required('Vui lòng nhập mô tả môn học'),
+    subjectCode: yup.string().required('Vui lòng nhập mã môn học'),
   });
   const form = useForm<TSubject>({
     resolver: yupResolver(schema),
@@ -74,7 +76,7 @@ const SubjectForm: React.FC<Props> = ({
       reset(data);
     }
     if (isNew) {
-      reset({ name: '' });
+      reset({ title: '' });
     }
   }, [data, isNew, reset, subject_id]);
 

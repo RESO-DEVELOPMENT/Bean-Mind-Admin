@@ -1,40 +1,67 @@
 export type TUser = {
-  id: number;
+  id: string;
   fullName: string;
+  firstName: string;
+  lastName: string;
   gender: number;
-  imageUrl: string;
+  imgUrl: string;
   phone: string;
   email: string;
   address: string;
-  dayOfBirth: string;
+  dateOfBirth: string;
   status: number;
   badge: number;
   roleId: number;
 };
 
 export type TMentor = {
-  id: number;
+  id: string;
   fullName: string;
-  gender: number;
-  imageUrl: string;
-  phone: string;
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  imageUrl?: string | null;
   email: string;
-  address: string;
-  dayOfBirth: string;
-  status: number;
-  badge: number;
-  roleId: number;
+  phone: string;
+  //schoolId: string;
+  accountId: string;
+  insDate?: Date | null;
+  updDate?: Date | null;
+  delFlg?: boolean | null;
+
+  //gender: number;
+  //address: string;
+  //status: number;
+  //badge: number;
+  //roleId: number;
 };
 
-export type TAdmin = {
-  id: number;
+export type TMentee = {
+  id: string;
+  firstName: string;
+  lastName: string;
   fullName: string;
+  dateOfBirth: string;
+  imgUrl: string;
+  parentId?: string | null;
+  accountId?: string | null;
+  insDate?: Date | null;
+  updDate?: Date | null;
+  delFlg?: boolean | null;
+}
+
+export type TAdmin = {
+  id: string;
+  fullName: string;
+  firstName: string;
+  lastName: string;
   gender: number;
-  imageUrl: string;
+  imgUrl: string;
+  accountId: string;
   phone: string;
   email: string;
   address: string;
-  dayOfBirth: string;
+  dateOfBirth: string;
   status: number;
   badge: number;
   roleId: number;

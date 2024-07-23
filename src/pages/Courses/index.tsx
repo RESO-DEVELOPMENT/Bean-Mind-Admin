@@ -8,6 +8,8 @@ import {
   Box,
   Button,
   Card,
+  CardActionArea,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -98,14 +100,14 @@ const CourseListPage = () => {
       newValue === '2'
         ? STATUS.Pending
         : newValue === '3'
-        ? STATUS.Waiting
-        : newValue === '4'
-        ? STATUS.Start
-        : newValue === '5'
-        ? STATUS.End
-        : newValue === '6'
-        ? STATUS.CancelNotEnough
-        : ''
+          ? STATUS.Waiting
+          : newValue === '4'
+            ? STATUS.Start
+            : newValue === '5'
+              ? STATUS.End
+              : newValue === '6'
+                ? STATUS.CancelNotEnough
+                : ''
     );
     setActiveTab(newValue);
     ref.current?.formControl.setValue('tabindex', newValue);
@@ -115,8 +117,8 @@ const CourseListPage = () => {
   const { id } = useParams();
 
   const { data, isLoading } = useQuery(
-    ['course', currentItem],
-    () => courseApi.getCourseById(Number(currentItem)),
+    ['courses', currentItem],
+    () => courseApi.getCourseById(String(currentItem)),
     {
       select: (res) => res.data,
     }
@@ -172,7 +174,7 @@ const CourseListPage = () => {
         });
       });
 
-      
+
   // title: string;
   // description: string;
   // startDate: Date;
@@ -250,7 +252,7 @@ const CourseListPage = () => {
   const columns = [
     {
       title: 'STT',
-      dataIndex: 'id',
+      dataIndex: 'index',
       hideInSearch: true,
     },
     {
@@ -278,23 +280,23 @@ const CourseListPage = () => {
             status === 2
               ? 'warning'
               : status === 3
-              ? 'info'
-              : status === 5
-              ? 'secondary'
-              : status === 6
-              ? 'success'
-              : 'default'
+                ? 'info'
+                : status === 5
+                  ? 'secondary'
+                  : status === 6
+                    ? 'success'
+                    : 'default'
           }
         >
           {status === 2
             ? 'Chờ duyệt'
             : status === 5
-            ? translate('common.available')
-            : status === 3
-            ? 'Chờ đủ mentee'
-            : status === 6
-            ? 'Đã hoàn thành'
-            : 'Đã huỷ'}
+              ? translate('common.available')
+              : status === 3
+                ? 'Chờ đủ mentee'
+                : status === 6
+                  ? 'Đã hoàn thành'
+                  : 'Đã huỷ'}
         </Label>
       ),
       hideInSearch: true,
@@ -355,18 +357,18 @@ const CourseListPage = () => {
     //   valueType: 'time',
     //   hideInTable: true,
     // },
-    {
-      title: 'Ngày bắt đầu',
-      dataIndex: 'startDate',
-      valueType: 'datetime',
-      hideInSearch: true,
-    },
-    {
-      title: 'Ngày kết thúc',
-      dataIndex: 'finishDate',
-      valueType: 'datetime',
-      hideInSearch: true,
-    },
+    // {
+    //   title: 'Ngày bắt đầu',
+    //   dataIndex: 'startDate',
+    //   valueType: 'datetime',
+    //   hideInSearch: true,
+    // },
+    // {
+    //   title: 'Ngày kết thúc',
+    //   dataIndex: 'finishDate',
+    //   valueType: 'datetime',
+    //   hideInSearch: true,
+    // },
     // {
     //   title: 'Ngày cập nhật',
     //   dataIndex: 'updateDate',
@@ -380,6 +382,13 @@ const CourseListPage = () => {
     //   hideInSearch: true,
     // },
   ];
+
+  // Data Fetching with Loading and Error Handling
+  const { data: coursesData, isLoading: coursesLoading } = useQuery(
+    'courses',
+    courseApi.getCourses
+  );
+
 
   return (
     <Page
@@ -399,16 +408,16 @@ const CourseListPage = () => {
         />
       }
       actions={() => [
-        // <Button
-        //   key="create-subject"
-        //   onClick={() => {
-        //     navigate(PATH_DASHBOARD.courses.new);
-        //   }}
-        //   variant="contained"
-        //   startIcon={<Icon icon={plusFill} />}
-        // >
-        //   {translate('pages.subjects.addBtn')}
-        // </Button>,
+        /*<Button
+          key="create-subject"
+          onClick={() => {
+            navigate(PATH_DASHBOARD.courses.new);
+          }}
+          variant="contained"
+          startIcon={<Icon icon={plusFill} />}
+        >
+          {translate('pages.subjects.addBtn')}
+        </Button>,*/
         <DeleteConfirmDialog
           key={''}
           open={Boolean(currentItem)}
@@ -416,77 +425,87 @@ const CourseListPage = () => {
           onDelete={deleteSubjectHandler}
           title={
             <>
-              {translate('common.confirmDeleteTitle')} <strong>{currentItem?.name}</strong>
+              {translate('common.confirmDeleteTitle')} <strong>{currentItem?.title}</strong>
             </>
           }
         />
       ]}
     >
       <Card>
+        {/* Consider removing TabContext if not using tabs for now */}
         <TabContext value={activeTab}>
-          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <TabList
-              onChange={handleChange}
-              aria-label="lab API tabs example"
-              sx={{ px: 2, bgcolor: 'background.neutral' }}
-              variant="scrollable"
-            >
-              <Tab
-                disableRipple
-                label={'Tất cả'}
-                icon={<Label color={'success'}>{allData?.length || 0}</Label>}
-                value="1"
-                sx={{ px: 2 }}
-              />
-              <Tab
-                label={'Chờ duyệt'}
-                icon={<Label color={'warning'}> {result.get(2)?.length || 0} </Label>}
-                value="2"
-                sx={{ px: 2 }}
-              />
-              <Tab
-                disableRipple
-                label={'Chờ đủ mentee'}
-                icon={<Label color={'info'}> {result.get(3)?.length || 0} </Label>}
-                value="3"
-                sx={{ px: 2 }}
-              />
-              <Tab
-                disableRipple
-                label={'Đang diễn ra'}
-                icon={<Label color={'secondary'}> {result.get(5)?.length || 0} </Label>}
-                value="4"
-                sx={{ px: 2 }}
-              />
-              <Tab
-                disableRipple
-                label={'Kết thúc'}
-                icon={<Label color={'success'}> {result.get(6)?.length || 0} </Label>}
-                value="5"
-                sx={{ px: 2 }}
-              />
-              <Tab
-                label={'Đã huỷ'}
-                icon={<Label color={'default'}> {result.get(4)?.length || 0} </Label>}
-                value="6"
-                sx={{ px: 2 }}
-              />
-            </TabList>
-          </Box>
-          <Stack spacing={2}>
-            <ResoTable
-              rowKey="id"
-              ref={ref}
-              onEdit={(course: any) => {
-                navigate(`${PATH_DASHBOARD.courses.root}/${course.id}`);
-                setIsUpdate(true);
-              }}
-              onView={(course: any) => navigate(`${PATH_DASHBOARD.courses.root}/${course.id}/view`)}
-              getData={courseApi.getCourses}
-              onDelete={setCurrentItem}
-              columns={columns}
-            />
-          </Stack>
+          {/* ... (You can remove the TabList section for now) ... */}
+
+          <Grid container spacing={2} sx={{ padding: 2 }}> {/* Add padding to the grid */}
+          {coursesData?.data.items.map((course: TCourse) => ( 
+            <Grid item xs={12} sm={6} md={4} key={course.id}>
+              <Card
+                sx={{
+                  border: '1px solid #D9D9D9',
+                  backgroundColor: '#FFFFFF',
+                  borderRadius: 2,
+                  overflow: 'hidden',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                <CardActionArea 
+                  sx={{ height: '100%' }} 
+                  onClick={() => navigate(`${PATH_DASHBOARD.courses.root}/${course.id}/view`)}
+                >
+                    <Box
+                      sx={{
+                        backgroundImage: 'linear-gradient(to bottom, #e0e0e0, #ffffff)',
+                        padding: 2,
+                        borderBottom: '1px solid #ddd',
+                        textAlign: 'center',
+                        flexGrow: 2,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <Typography
+                        variant="h6"
+                        sx={{
+                          fontFamily: 'Segoe UI',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        {course.title}
+                      </Typography>
+                    </Box>
+
+                    <Box sx={{ padding: 2, flexGrow: 1 }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ fontFamily: 'sans-serif' }}>
+                        {course.description}
+                      </Typography>
+
+                      {/* Display other relevant course details here */}
+                      <Typography variant="body2">
+                        {/* Mentor: {course.mentor?.fullName} */}
+                      </Typography>
+                      {/* ... add more course details as needed ... */}
+
+                      {/* Add buttons/actions for each course here */}
+                      <IconButton
+                        onClick={(event) => {
+                          event.stopPropagation(); // Prevent card click from triggering
+                          navigate(`${PATH_DASHBOARD.courses.root}/${course.id}`);
+                          setIsUpdate(true);
+                        }}
+                      >
+                        <Icon icon={eyeFill} width={20} height={20} />
+                      </IconButton>
+                      {/* Add other action buttons (e.g., delete) similarly */}
+                    </Box>
+                  </CardActionArea>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+
+          {/* ... (You can remove the TabContext closing tag for now) ... */}
         </TabContext>
       </Card>
     </Page>

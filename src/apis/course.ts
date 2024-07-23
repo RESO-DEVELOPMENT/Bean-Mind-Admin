@@ -2,15 +2,17 @@ import { TCourse } from 'types/course';
 import { generateAPIWithPaging } from './utils';
 import request from 'utils/axios';
 
-const getCourses = (params?: any) => request.get('/admin/courses', { params });
+const getCourses = (params?: any) => request.get('/courses', { params });
 
-const getCourseById = (id: number, params?: any) => request.get(`/courses/${id}`, { params });
+const getCourseById = (id: string, params?: any) => request.get(`/courses/${id}`, { params });
 
-const remove = (id: number) => request.delete(`/admin/courses/${id}`);
+const getSubjectByCourseId = (id: string) => request.get(`/courses/${id}/subjects?page=1&size=10`);
 
-const add = (data: any) => request.post('/admin/courses', data);
+const remove = (id: string) => request.delete(`/courses/${id}`);
 
-const update = (id: number, data: TCourse) => request.put(`/admin/courses/${id}`, data);
+const add = (data: any) => request.post('/courses', data);
+
+const update = (id: string, data: TCourse) => request.put(`/courses/${id}`, data);
 
 const courseApi = {
   ...generateAPIWithPaging<TCourse>('courses'),
@@ -19,6 +21,7 @@ const courseApi = {
   remove,
   add,
   update,
+  getSubjectByCourseId,
 };
 
 export default courseApi;

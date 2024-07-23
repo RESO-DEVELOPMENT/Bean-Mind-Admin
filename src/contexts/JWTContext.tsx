@@ -85,23 +85,24 @@ function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     const initialize = async () => {
       try {
-        const token : string = localStorage.getItem('accessToken') || "";
-        const _token = JSON.parse(token);
-        const {accessToken, user} = _token;
-        console.log("accessToken", accessToken);
-        console.log("user", user);
+        const accessToken = localStorage.getItem('accessToken');
+
         if (accessToken && isValidToken(accessToken)) {
-          console.log('lưu lại token access')
-          setSession(JSON.stringify(_token));
+          setSession(accessToken);
+          const user = jwtDecode<AuthUser>(accessToken);
+          if (user) {
+            localStorage.setItem('acountId', user.AccountId);
+          }
 
           // const response = await request.get('/users/me');
           // const user = response?.data;
+          //localStorage.setItem('user', JSON.stringify(user));
           console.log(user);
 
           dispatch({
             type: Types.Initial,
             payload: {
-              isAuthenticated:true,
+              isAuthenticated: true,
               user,
             },
           });
@@ -134,23 +135,15 @@ function AuthProvider({ children }: AuthProviderProps) {
       username,
       password,
     });
-    console.log(response.data);
-    const { accessToken, name, role, userId , user} = response.data;
-    const token = {
-      "accessToken" : accessToken,
-      "user": {
-        "name": name,
-        "role": role,
-        "userId": userId
-      }
-    }
-    console.log(token)
-    setSession(JSON.stringify(token));
-    
+    const { accessToken, user } = response.data;
+
+    //localStorage.setItem('accessToken', accessToken);
+    setSession(accessToken);
+
     dispatch({
       type: Types.Login,
       payload: {
-        user
+        user,
       },
     });
   };
@@ -201,6 +194,8 @@ function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const logout = async () => {
+    // localStorage.removeItem('accessToken');
+    // localStorage.removeItem('user');
     setSession(null);
     dispatch({ type: Types.Logout });
   };
