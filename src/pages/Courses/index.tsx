@@ -432,9 +432,9 @@ const CourseListPage = () => {
       ]}
     >
       <Card>
-        {/* Consider removing TabContext if not using tabs for now */}
-        <TabContext value={activeTab}>
-          {/* ... (You can remove the TabList section for now) ... */}
+        
+        {/* <TabContext value={activeTab}> */}
+          
 
           <Grid container spacing={2} sx={{ padding: 2 }}> {/* Add padding to the grid */}
           {coursesData?.data.items.map((course: TCourse) => ( 
@@ -497,7 +497,7 @@ const CourseListPage = () => {
                       >
                         <Icon icon={eyeFill} width={20} height={20} />
                       </IconButton>
-                      {/* Add other action buttons (e.g., delete) similarly */}
+                      {/* Add other action buttons similarly */}
                     </Box>
                   </CardActionArea>
                 </Card>
@@ -505,8 +505,8 @@ const CourseListPage = () => {
             ))}
           </Grid>
 
-          {/* ... (You can remove the TabContext closing tag for now) ... */}
-        </TabContext>
+        
+        {/* </TabContext> */}
       </Card>
     </Page>
   );

@@ -8,12 +8,15 @@ import {
   Box,
   Button,
   Card,
+  CardActionArea,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   Grid,
   Stack,
+  Typography,
 } from '@mui/material';
 import DeleteConfirmDialog from 'components/DeleteConfirmDialog';
 import Page from 'components/Page';
@@ -34,6 +37,7 @@ import LoadingAsyncButton from 'components/LoadingAsyncButton';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ref, getDownloadURL, uploadBytesResumable } from 'firebase/storage';
 import { storage } from 'config';
+import { useQuery } from 'react-query';
 
 function groupBy(list: any, keyGetter: any) {
   const map = new Map();
@@ -141,28 +145,45 @@ const MajorListPage = () => {
       dataIndex: 'index',
       hideInSearch: true,
     },
+    // {
+    //   title: 'Hình ảnh',
+    //   dataIndex: 'imageUrl',
+    //   hideInSearch: true,
+    //   render: (src: any, { title }: any) => (
+    //     <Avatar
+    //       alt={title}
+    //       src={src}
+    //       variant={'rounded'}
+    //       style={{ width: '54px', height: '54px' }}
+    //     />
+    //   ),
+    // },
     {
-      title: 'Hình ảnh',
-      dataIndex: 'imageUrl',
-      hideInSearch: true,
-      render: (src: any, { title }: any) => (
-        <Avatar
-          alt={title}
-          src={src}
-          variant={'rounded'}
-          style={{ width: '54px', height: '54px' }}
-        />
-      ),
+      title: 'Chương Trình Học',
+      dataIndex: 'title',
     },
     {
-      title: 'Tên chuyên ngành',
-      dataIndex: 'name',
-    },
+      title: 'Mô tả',
+      dataIndex: 'description',
+    }
   ];
+
+  // Data Fetching (Assuming similar structure to previous examples)
+  const { data: majorsData, isLoading, error } = useQuery(
+    'curriculums',
+    majorApi.getMajors 
+  );
+  if (isLoading) {
+    return <CircularProgress />; 
+  }
+
+  if (error) {
+    return <Typography color="error">Error loading majors!</Typography>;
+  }
 
   return (
     <Page
-      title={`Chuyên ngành`}
+      title={`Chương trình học`}
       isTable
       content={
         <HeaderBreadcrumbs
@@ -170,8 +191,8 @@ const MajorListPage = () => {
           links={[
             { name: `${translate('dashboard')}`, href: PATH_DASHBOARD.root },
             {
-              name: `Chuyên ngành`,
-              href: PATH_DASHBOARD.courses.root,
+              name: `Chương trình học`,
+              href: PATH_DASHBOARD.majors.root,
             },
             { name: `${translate('list')}` },
           ]}
@@ -186,13 +207,13 @@ const MajorListPage = () => {
           variant="contained"
           startIcon={<Icon icon={plusFill} />}
         >
-          {`Tạo chuyên ngành`}
+          {`Tạo chương trình học`}
         </Button>,
       ]}
     >
       <Dialog fullWidth maxWidth="sm" open={formModal} onClose={() => setFormModal(false)}>
         <FormProvider {...methods}>
-          <DialogTitle>{'Tạo chuyên ngành'}</DialogTitle>
+          <DialogTitle>{'Tạo chương trình học'}</DialogTitle>
           <DialogContent dividers>
             <RHFTextField name="name" label="Tên chuyên ngành" />
             <Box sx={{ mb: 5 }}>
@@ -214,20 +235,47 @@ const MajorListPage = () => {
           </DialogActions>
         </FormProvider>
       </Dialog>
-      <Card>
-        <Stack spacing={2}>
-          <ResoTable
-            rowKey="id"
-            ref={ref}
-            onEdit={(major: any) => {
-              navigate(`${PATH_DASHBOARD.majors.root}/${major.id}`);
-            }}
-            getData={majorApi.getMajors}
-            onDelete={setCurrentItem}
-            columns={columns}
-          />
-        </Stack>
-      </Card>
+      <Grid container spacing={2} sx={{ padding: 2 }}>
+        {majorsData?.data.items.map((major: TMajor) => (
+          <Grid item xs={12} key={major.id} > {/* Each major is a full-width row */}
+            <Card 
+              sx={{ 
+                display: 'flex', 
+                border: '1px solid #D9D9D9',
+                backgroundColor: '#FFFFFF',
+              }}
+            >
+              <CardActionArea 
+                sx={{ 
+                  display: 'flex', 
+                  height: '100%', 
+                  padding: 2, 
+                  flexDirection: { xs: 'column', sm: 'row' } // Stack vertically on small screens
+                }}
+                onClick={() => navigate(`${PATH_DASHBOARD.majors.root}/${major.id}`)}
+              >
+                <Box sx={{ flexShrink: 0, width: { xs: '100%', sm: 200 } }}>
+                  <Avatar
+                    alt={major.title}
+                    src={major.imageUrl} // Assuming your major object has an imageUrl
+                    variant="rounded"
+                    sx={{ width: '100%', height: 'auto' }} // Responsive image
+                  />
+                </Box>
+
+                <Box sx={{ padding: 2, flexGrow: 1 }}>
+                  <Typography variant="h6" sx={{ fontFamily: 'Segoe UI', fontWeight: 'bold' }}>
+                    {major.title}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ fontFamily: 'sans-serif' }}>
+                    {major.description}
+                  </Typography>
+                </Box>
+              </CardActionArea>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
     </Page>
   );
 };
