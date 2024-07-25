@@ -1,182 +1,188 @@
-// @mui
-import { useTheme } from '@mui/material/styles';
-import { Container, Grid, Stack, Button } from '@mui/material';
-// hooks
-import useAuth from '../../hooks/useAuth';
-import useSettings from '../../hooks/useSettings';
-// _mock_
-import { _appFeatured, _appAuthors, _appInstalled, _appRelated, _appInvoices } from '../../_mock';
-// components
-import Page from '../../components/Page';
-// sections
-import {
-  AppWidget,
-  AppWelcome,
-  AppFeatured,
-  AppNewInvoice,
-  AppTopAuthors,
-  AppTopRelated,
-  AppAreaInstalled,
-  AppWidgetSummary,
-  AppCurrentDownload,
-  AppTopInstalledCountries,
-} from '../../sections/@dashboard/general/app';
-// assets
-import { SeoIllustration } from '../../assets';
+import React, { useState } from 'react';
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import { Box, Card, CardActionArea, Grid, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { PATH_DASHBOARD } from 'routes/paths';
+import { TMajor } from 'types/major';
+import majorApi from 'apis/major';
 import { useQuery } from 'react-query';
-import statisticsApi from 'apis/statistics';
 
-// ----------------------------------------------------------------------
+const GeneralApp = () => {
+  const navigate = useNavigate();
+  const [activeSlide, setActiveSlide] = useState(0); // Track active slide
 
-export default function GeneralApp() {
-  const { user } = useAuth();
+  // Fetch majors data using majorApi (similar to previous examples)
+  const { data: majorsData, isLoading, error } = useQuery(
+    'majors',
+    majorApi.getMajors // Make sure this returns the data in the correct structure
+  );
 
-  const theme = useTheme();
+  // Custom Arrows (for styling)
+  const NextArrow = (props: any) => {
+    const { className, style, onClick } = props;
+    return (
+      <div
+        className={className}
+        style={{ ...style, display: "block", right: '2rem', 
+          background: 'lightgray', // Add a semi-transparent black background
+          borderRadius: '50%',             // Make the arrows circular
+          //padding: '10px',                  // Add padding for better visibility
+        }}
+        onClick={onClick}
+      />
+    );
+  }
 
-  const { themeStretch } = useSettings();
+  const PrevArrow = (props: any) => {
+    const { className, style, onClick } = props;
+    return (
+      <div
+        className={className}
+        style={{ ...style, display: "block", left: '2rem', zIndex: 1, 
+          background: 'lightgray', // Add a semi-transparent black background
+          borderRadius: '50%',             // Make the arrows circular
+          //padding: '10px',                  // Add padding for better visibility
+        }}
+        onClick={onClick}
+      />
+    );
+  }
 
-  const { data: statistics } = useQuery('statistics', () => statisticsApi.getStatistics());
+  const settings = {
+    dots: true, // Show navigation dots
+    infinite: true, // Loop the slides
+    speed: 500, // Transition speed in milliseconds
+    slidesToShow: 1, // Number of slides to show at once
+    slidesToScroll: 1, // Number of slides to scroll on click
+    nextArrow: <NextArrow />, // Custom next arrow (defined below)
+    prevArrow: <PrevArrow />, // Custom previous arrow (defined below)
+    beforeChange: (current: number, next: number) => setActiveSlide(next), // Update active slide
+    autoplay: true,             // Enable autoplay
+    autoplaySpeed: 5000,        // Autoplay speed in milliseconds (3 seconds)
+  };
 
-  const lastStatistics = statistics?.data[statistics?.data?.length - 1];
-  console.log(lastStatistics);
 
   return (
-    <Page title="General: App">
-      <Container maxWidth={themeStretch ? false : 'xl'}>
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={8}>
-            <AppWelcome
-              title={`Welcome back! \n ${user?.displayName}`}
-              description="If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything."
-              img={
-                <SeoIllustration
-                  sx={{
-                    p: 3,
-                    width: 360,
-                    margin: { xs: 'auto', md: 'inherit' },
-                  }}
-                />
-              }
-              action={<Button variant="contained">Go Now</Button>}
-            />
-          </Grid>
+    // ... your other JSX ...
+    <>
+      {/* // ... your other JSX ... */}
+      <Box sx={{
+        marginTop: '2rem', // Add top margin 
+        position: 'relative', // To position arrows correctly
+        maxWidth: '80vw', // Control the maximum width of the banner container 
+        margin: '0 auto', // Center the banner container
+      }}>
+        <Slider {...settings}>
+          {[1, 2, 3, 4, 5].map((slide) => (
+            <div key={slide}>
+              <BannerItem slide={slide} isActive={activeSlide === slide - 1} />
+            </div>
+          ))}
+        </Slider>
+      </Box>
+      {/* // ... your other JSX ... */}
+      <Box sx={{ marginTop: '4rem', textAlign: 'center' }}>
+        <Typography variant="h4" gutterBottom>
+          Chương Trình Học
+        </Typography>
 
-          <Grid item xs={12} md={4}>
-            <AppFeatured list={_appFeatured} />
-          </Grid>
-
-          <Grid item xs={12} md={4}>
-            <AppWidgetSummary
-              title="Total Week Users"
-              percent={lastStatistics?.weekUserGrowth}
-              total={lastStatistics?.totalWeekUser}
-              chartColor={theme.palette.primary.main}
-              chartData={[5, 18, 12, 51, 68, 11, 39, 37, 27, 20]}
-            />
-          </Grid>
-
-          <Grid item xs={12} md={4}>
-            <AppWidgetSummary
-              title="Total Week Courses"
-              percent={lastStatistics?.weekCourseGrowth}
-              total={lastStatistics?.totalWeekCourse}
-              chartColor={theme.palette.chart.blue[0]}
-              chartData={[20, 41, 63, 33, 28, 35, 50, 46, 11, 26]}
-            />
-          </Grid>
-
-          <Grid item xs={12} md={4}>
-            <AppWidgetSummary
-              title="Total Week Orders"
-              percent={lastStatistics?.weekOrderGrowth}
-              total={lastStatistics?.totalWeekOrder}
-              chartColor={theme.palette.chart.red[0]}
-              chartData={[8, 9, 31, 8, 16, 37, 8, 33, 46, 31]}
-            />
-          </Grid>
-
-          {/* <Grid item xs={12} md={6} lg={4}>
-            <AppCurrentDownload
-              title="Current Download"
-              chartColors={[
-                theme.palette.primary.lighter,
-                theme.palette.primary.light,
-                theme.palette.primary.main,
-                theme.palette.primary.dark,
-              ]}
-              chartData={[
-                { label: 'Mac', value: 12244 },
-                { label: 'Window', value: 53345 },
-                { label: 'iOS', value: 44313 },
-                { label: 'Android', value: 78343 },
-              ]}
-            />
-          </Grid> */}
-
-          {/* <Grid item xs={12} md={6} lg={8}>
-            <AppAreaInstalled
-              title="Orders"
-              subheader="(+43%) than last year"
-              chartLabels={['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep']}
-              chartData={[
-                {
-                  year: '2019',
-                  data: [
-                    { name: 'Asia', data: [10, 41, 35, 51, 49, 62, 69, 91, 148] },
-                    { name: 'America', data: [10, 34, 13, 56, 77, 88, 99, 77, 45] },
-                  ],
-                },
-                {
-                  year: '2020',
-                  data: [
-                    { name: 'Asia', data: [148, 91, 69, 62, 49, 51, 35, 41, 10] },
-                    { name: 'America', data: [45, 77, 99, 88, 77, 56, 13, 34, 10] },
-                  ],
-                },
-              ]}
-            />
-          </Grid> */}
-
-          {/* <Grid item xs={12} lg={8}>
-            <AppNewInvoice
-              title="New Invoice"
-              tableData={_appInvoices}
-              tableLabels={[
-                { id: 'id', label: 'Invoice ID' },
-                { id: 'category', label: 'Category' },
-                { id: 'price', label: 'Price' },
-                { id: 'status', label: 'Status' },
-                { id: '' },
-              ]}
-            />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
-            <AppTopRelated title="Top Related Applications" list={_appRelated} />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
-            <AppTopInstalledCountries title="Top Installed Countries" list={_appInstalled} />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
-            <AppTopAuthors title="Top Authors" list={_appAuthors} />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
-            <Stack spacing={3}>
-              <AppWidget title="Conversion" total={38566} icon={'eva:person-fill'} chartData={48} />
-              <AppWidget
-                title="Applications"
-                total={55566}
-                icon={'eva:email-fill'}
-                color="warning"
-                chartData={75}
-              />
-            </Stack>
-          </Grid> */}
-        </Grid>
-      </Container>
-    </Page>
+        {isLoading ? ( // Loading state
+          <Typography>Loading majors...</Typography>
+        ) : error ? ( // Error state
+          <Typography color="error">Error loading majors!</Typography>
+        ) : ( // Data loaded successfully
+          <Box sx={{
+            position: 'relative', // Position arrows
+            maxWidth: '90vw', // Adjust max width as needed
+            // margin: '0 auto', // Center the section
+            margin: '2rem auto', // Add margin top and bottom for spacing 
+          }}>
+            <Slider {...{
+              ...settings,
+              autoplay: false,
+              slidesToShow: Math.min(3, majorsData?.data.items.length || 0), // Set slidesToShow based on item count
+              // ... (other slider settings)
+            }}>
+              {majorsData?.data.items.map((major: TMajor) => (
+                <div key={major.id}>
+                  <MajorCard major={major} />
+                </div>
+              ))}
+            </Slider>
+          </Box>
+        )}
+      </Box></>
   );
-}
+};
+
+// Banner Item Component
+const BannerItem = ({ slide, isActive }: { slide: number, isActive: boolean }) => {
+  return (
+    <Box
+      sx={{
+        height: 200, // Adjust the height as needed
+        borderRadius: 2, // Rounded corners
+        backgroundColor: isActive ? 'lightgreen' : 'lightgray', // Example colors
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        margin: '1rem', // Add margin between slides
+        overflow: 'hidden', // Hide content overflow for rounded corners
+      }}
+    >
+      <Typography variant="h5">
+        Banner {slide} - Random Text
+      </Typography>
+    </Box>
+  );
+};
+
+// Major Card Component
+const MajorCard = ({ major }: { major: TMajor }) => {
+  const navigate = useNavigate();
+
+  return (
+    <Card
+      sx={{
+        border: '1px solid #D9D9D9',
+        backgroundColor: '#FFFFFF',
+        borderRadius: 2,
+        overflow: 'hidden',
+        margin: '1rem',
+        display: 'flex',
+        flexDirection: 'column',
+        height: 250, // Adjust card height if needed
+      }}
+    >
+      <CardActionArea
+        sx={{ height: '100%' }}
+        onClick={() => navigate(`${PATH_DASHBOARD.majors.root}/${major.id}`)} // Assuming you want the card to be clickable
+      >
+        <Box
+          sx={{
+            padding: 2,
+            borderBottom: '1px solid #ddd',
+            textAlign: 'center',
+            flexGrow: 1,          // Title takes up available space
+            display: 'flex',
+            alignItems: 'center', // Center title vertically
+            justifyContent: 'center', // Center title horizontally
+          }}
+        >
+          <Typography variant="h6" sx={{ fontFamily: 'Segoe UI', fontWeight: 'bold' }}>
+            {major.title}
+          </Typography>
+        </Box>
+
+        <Box sx={{ padding: 2, flexGrow: 2 }}> {/* Description and other content */}
+          {/* You can add the major.description and other details here */}
+          {major.description} <br />
+        </Box>
+      </CardActionArea>
+    </Card>
+  );
+};
+
+export default GeneralApp;

@@ -39,19 +39,19 @@ import { ref, getDownloadURL, uploadBytesResumable } from 'firebase/storage';
 import { storage } from 'config';
 import { useQuery } from 'react-query';
 
-function groupBy(list: any, keyGetter: any) {
-  const map = new Map();
-  list?.forEach((item: any) => {
-    const key = keyGetter(item);
-    const collection = map.get(key);
-    if (!collection) {
-      map.set(key, [item]);
-    } else {
-      collection.push(item);
-    }
-  });
-  return map;
-}
+// function groupBy(list: any, keyGetter: any) {
+//   const map = new Map();
+//   list?.forEach((item: any) => {
+//     const key = keyGetter(item);
+//     const collection = map.get(key);
+//     if (!collection) {
+//       map.set(key, [item]);
+//     } else {
+//       collection.push(item);
+//     }
+//   });
+//   return map;
+// }
 
 const MajorListPage = () => {
   const navigate = useNavigate();
@@ -171,15 +171,26 @@ const MajorListPage = () => {
   // Data Fetching (Assuming similar structure to previous examples)
   const { data: majorsData, isLoading, error } = useQuery(
     'curriculums',
-    majorApi.getMajors 
+    majorApi.getMajors
   );
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
   if (isLoading) {
-    return <CircularProgress />; 
+    return <CircularProgress />;
   }
 
   if (error) {
     return <Typography color="error">Error loading majors!</Typography>;
   }
+
+  // Pagination logic
+  const totalItems = majorsData?.data.items.length || 0;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const displayedMajors = majorsData?.data.items.slice(startIndex, endIndex);
 
   return (
     <Page
@@ -237,19 +248,20 @@ const MajorListPage = () => {
       </Dialog>
       <Grid container spacing={2} sx={{ padding: 2 }}>
         {majorsData?.data.items.map((major: TMajor) => (
-          <Grid item xs={12} key={major.id} > {/* Each major is a full-width row */}
-            <Card 
-              sx={{ 
-                display: 'flex', 
+          //Each major is a full-width row
+          <Grid item xs={12} key={major.id} >
+            <Card
+              sx={{
+                display: 'flex',
                 border: '1px solid #D9D9D9',
                 backgroundColor: '#FFFFFF',
               }}
             >
-              <CardActionArea 
-                sx={{ 
-                  display: 'flex', 
-                  height: '100%', 
-                  padding: 2, 
+              <CardActionArea
+                sx={{
+                  display: 'flex',
+                  height: '100%',
+                  padding: 2,
                   flexDirection: { xs: 'column', sm: 'row' } // Stack vertically on small screens
                 }}
                 onClick={() => navigate(`${PATH_DASHBOARD.majors.root}/${major.id}`)}
@@ -259,7 +271,7 @@ const MajorListPage = () => {
                     alt={major.title}
                     src={major.imageUrl} // Assuming your major object has an imageUrl
                     variant="rounded"
-                    sx={{ width: '100%', height: 'auto' }} // Responsive image
+                    sx={{ width: '100%', height: 'auto' }}
                   />
                 </Box>
 
@@ -276,6 +288,24 @@ const MajorListPage = () => {
           </Grid>
         ))}
       </Grid>
+      {/* Pagination Controls */}
+      <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
+        <Button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </Button>
+        <Typography variant="body2" sx={{ padding: '0 16px' }}>
+          Page {currentPage} of {totalPages}
+        </Typography>
+        <Button
+          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </Button>
+      </Box>
     </Page>
   );
 };
