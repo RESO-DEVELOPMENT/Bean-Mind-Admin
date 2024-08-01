@@ -4,6 +4,7 @@ import eyeFill from '@iconify/icons-eva/eye-fill';
 import { Icon } from '@iconify/react';
 // material
 import {
+  Autocomplete,
   Badge,
   Box,
   Button,
@@ -20,6 +21,7 @@ import {
   MenuItem,
   Stack,
   Tab,
+  TextField,
   Tooltip,
   Typography,
 } from '@mui/material';
@@ -43,12 +45,13 @@ import * as yup from 'yup';
 import HeaderBreadcrumbs from 'components/HeaderBreadcrumbs';
 import Iconify from 'components/Iconify';
 import { useQuery } from 'react-query';
-import { useParams } from 'react-router';
+import { useLocation, useParams } from 'react-router';
 import LoadingAsyncButton from 'components/LoadingAsyncButton';
 import { TabContext, TabList } from '@mui/lab';
 import { type } from 'os';
 import axios from 'axios';
 import request, { axiosInstance } from 'utils/axios';
+import majorApi from 'apis/major';
 
 const STATUS_OPTIONS = ['Tất cả', 'Đã duyệt', 'Chờ duyệt', 'Đã huỷ'];
 
@@ -389,6 +392,68 @@ const CourseListPage = () => {
     courseApi.getCourses
   );
 
+  // Fetch majors data
+  const { data: majorsData, isLoading: majorsLoading } = useQuery(
+    'majors',
+    majorApi.getMajors
+  );
+
+   // Filtering states and functions
+   const [filteredCourses, setFilteredCourses] = useState<TCourse[]>(coursesData?.data.items || []);
+   const [selectedCourseTitle, setSelectedCourseTitle] = useState<string | null>(null);
+   const [selectedMajorTitle, setSelectedMajorTitle] = useState<string | null>(null);
+ 
+ 
+   const handleCourseTitleChange = (event: any, newValue: string | null) => {
+     setSelectedCourseTitle(newValue);
+     applyFilters(newValue, selectedMajorTitle);
+   };
+ 
+   const handleMajorTitleChange = (event: any, newValue: string | null) => {
+     setSelectedMajorTitle(newValue);
+     applyFilters(selectedCourseTitle, newValue); 
+   };
+ 
+   // Function to apply both filters
+   const applyFilters = (courseTitle: string | null, majorTitle: string | null) => {
+     let filtered = coursesData?.data.items || [];
+ 
+     if (courseTitle) {
+       filtered = filtered.filter((course: { title: string; }) =>
+         course.title.toLowerCase().includes(courseTitle.toLowerCase())
+       );
+     }
+ 
+     if (majorTitle) {
+       const selectedMajor = majorsData?.data.items.find(
+         (major: { title: string; }) => major.title === majorTitle
+       );
+ 
+       if (selectedMajor) {
+         filtered = filtered.filter(
+           (course: { curriculumId: any; }) => course.curriculumId === selectedMajor.id
+         );
+       }
+     }
+ 
+     setFilteredCourses(filtered);
+   };
+
+   // Get query parameters from URL
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const initialCurriculumId = queryParams.get('curriculumId'); 
+
+  // Set the initial selectedMajorTitle (if curriculumId is provided in URL)
+  useEffect(() => {
+    if (initialCurriculumId && majorsData) {
+      const major = majorsData?.data.items.find((m: { id: string; }) => m.id === initialCurriculumId);
+      if (major) {
+        setSelectedMajorTitle(major.title); 
+        applyFilters(selectedCourseTitle, major.title);
+      }
+    }
+  }, [initialCurriculumId, majorsData, selectedCourseTitle]); // Run when initialCurriculumId or majorsData changes
 
   return (
     <Page
@@ -435,9 +500,32 @@ const CourseListPage = () => {
         
         {/* <TabContext value={activeTab}> */}
           
+        <Stack spacing={2} sx={{ padding: 2 }}>
+          {/* Autocomplete for filtering by Course Title */}
+          <Autocomplete
+            id="course-title-filter"
+            options={coursesData?.data.items.map((course: { title: any; }) => course.title) || []}
+            value={selectedCourseTitle}
+            onChange={handleCourseTitleChange}
+            renderInput={(params) => (
+              <TextField {...params} label="Filter by Course Title" variant="outlined" />
+            )}
+            sx={{ width: '50%' }} 
+          />
 
+          {/* Autocomplete for filtering by Major Title (curriculumId) */}
+          <Autocomplete
+            id="major-title-filter"
+            options={majorsData?.data.items.map((major: { title: any; }) => major.title) || []}
+            value={selectedMajorTitle}
+            onChange={handleMajorTitleChange}
+            renderInput={(params) => (
+              <TextField {...params} label="Filter by Major Title" variant="outlined" />
+            )}
+            sx={{ width: '50%' }} 
+          />
           <Grid container spacing={2} sx={{ padding: 2 }}> {/* Add padding to the grid */}
-          {coursesData?.data.items.map((course: TCourse) => ( 
+          {filteredCourses.map((course: TCourse) => ( 
             <Grid item xs={12} sm={6} md={4} key={course.id}>
               <Card
                 sx={{
@@ -451,7 +539,8 @@ const CourseListPage = () => {
               >
                 <CardActionArea 
                   sx={{ height: '100%' }} 
-                  onClick={() => navigate(`${PATH_DASHBOARD.courses.root}/${course.id}/view`)}
+                  //onClick={() => navigate(`${PATH_DASHBOARD.courses.root}/${course.id}/view`)}
+                  onClick={() => navigate(`${PATH_DASHBOARD.subjects.root}?courseCode=${course.courseCode}`)}
                 >
                     <Box
                       sx={{
@@ -504,7 +593,7 @@ const CourseListPage = () => {
               </Grid>
             ))}
           </Grid>
-
+          </Stack>
         
         {/* </TabContext> */}
       </Card>

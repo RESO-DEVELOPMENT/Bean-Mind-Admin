@@ -4,6 +4,7 @@ import { Icon } from '@iconify/react';
 import * as yup from 'yup';
 // material
 import {
+  Autocomplete,
   Avatar,
   Box,
   Button,
@@ -16,6 +17,7 @@ import {
   DialogTitle,
   Grid,
   Stack,
+  TextField,
   Typography,
 } from '@mui/material';
 import DeleteConfirmDialog from 'components/DeleteConfirmDialog';
@@ -173,9 +175,23 @@ const MajorListPage = () => {
     'curriculums',
     majorApi.getMajors
   );
-  // Pagination state
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+
+  const [filteredMajors, setFilteredMajors] = useState<TMajor[]>(majorsData?.data.items || []);
+  const [selectedTitle, setSelectedTitle] = useState<string | null>(null);
+
+  const handleTitleChange = (event: any, newValue: string | null) => {
+    setSelectedTitle(newValue);
+
+    if (newValue) {
+      // Filter majors based on the selected title
+      setFilteredMajors(
+        majorsData?.data.items.filter((major: { title: string; }) => major.title.toLowerCase().includes(newValue.toLowerCase())) || []
+      );
+    } else {
+      // If no title selected, show all majors
+      setFilteredMajors(majorsData?.data.items || []);
+    }
+  };
 
   if (isLoading) {
     return <CircularProgress />;
@@ -184,13 +200,6 @@ const MajorListPage = () => {
   if (error) {
     return <Typography color="error">Error loading majors!</Typography>;
   }
-
-  // Pagination logic
-  const totalItems = majorsData?.data.items.length || 0;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const displayedMajors = majorsData?.data.items.slice(startIndex, endIndex);
 
   return (
     <Page
@@ -246,66 +255,63 @@ const MajorListPage = () => {
           </DialogActions>
         </FormProvider>
       </Dialog>
-      <Grid container spacing={2} sx={{ padding: 2 }}>
-        {majorsData?.data.items.map((major: TMajor) => (
-          //Each major is a full-width row
-          <Grid item xs={12} key={major.id} >
-            <Card
-              sx={{
-                display: 'flex',
-                border: '1px solid #D9D9D9',
-                backgroundColor: '#FFFFFF',
-              }}
-            >
-              <CardActionArea
-                sx={{
-                  display: 'flex',
-                  height: '100%',
-                  padding: 2,
-                  flexDirection: { xs: 'column', sm: 'row' } // Stack vertically on small screens
-                }}
-                onClick={() => navigate(`${PATH_DASHBOARD.majors.root}/${major.id}`)}
-              >
-                <Box sx={{ flexShrink: 0, width: { xs: '100%', sm: 200 } }}>
-                  <Avatar
-                    alt={major.title}
-                    src={major.imageUrl} // Assuming your major object has an imageUrl
-                    variant="rounded"
-                    sx={{ width: '100%', height: 'auto' }}
-                  />
-                </Box>
+      <Card>
+        <Stack spacing={2} sx={{ padding: 2 }}> {/* Add padding to the Stack */}
+          {/* Autocomplete for filtering majors */}
+          <Autocomplete
+            id="major-title-filter"
+            options={majorsData?.data.items.map((major: { title: any; }) => major.title) || []} // Get unique major titles
+            value={selectedTitle}
+            onChange={handleTitleChange}
+            renderInput={(params) => (
+              <TextField {...params} label="Filter by Major Title" variant="outlined" />
+            )}
+            sx={{ width: '50%' }} // Adjust width as needed
+          />
+          <Grid container spacing={2} sx={{ padding: 2 }}>
+            {filteredMajors.map((major: TMajor) => (
+              //Each major is a full-width row
+              <Grid item xs={12} key={major.id} >
+                <Card
+                  sx={{
+                    display: 'flex',
+                    border: '1px solid #D9D9D9',
+                    backgroundColor: '#FFFFFF',
+                  }}
+                >
+                  <CardActionArea
+                    sx={{
+                      display: 'flex',
+                      height: '100%',
+                      padding: 2,
+                      flexDirection: { xs: 'column', sm: 'row' } // Stack vertically on small screens
+                    }}
+                    onClick={() => navigate(`${PATH_DASHBOARD.courses.root}`)}
+                  >
+                    <Box sx={{ flexShrink: 0, width: { xs: '100%', sm: 200 } }}>
+                      <Avatar
+                        alt={major.title}
+                        src={major.imageUrl} // Assuming your major object has an imageUrl
+                        variant="rounded"
+                        sx={{ width: '100%', height: 'auto' }}
+                      />
+                    </Box>
 
-                <Box sx={{ padding: 2, flexGrow: 1 }}>
-                  <Typography variant="h6" sx={{ fontFamily: 'Segoe UI', fontWeight: 'bold' }}>
-                    {major.title}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ fontFamily: 'sans-serif' }}>
-                    {major.description}
-                  </Typography>
-                </Box>
-              </CardActionArea>
-            </Card>
+                    <Box sx={{ padding: 2, flexGrow: 1 }}>
+                      <Typography variant="h6" sx={{ fontFamily: 'Segoe UI', fontWeight: 'bold' }}>
+                        {major.title}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary" sx={{ fontFamily: 'sans-serif' }}>
+                        {major.description}
+                      </Typography>
+                    </Box>
+                  </CardActionArea>
+                </Card>
+              </Grid>
+            ))}
           </Grid>
-        ))}
-      </Grid>
-      {/* Pagination Controls */}
-      <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
-        <Button
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}
-        >
-          Previous
-        </Button>
-        <Typography variant="body2" sx={{ padding: '0 16px' }}>
-          Page {currentPage} of {totalPages}
-        </Typography>
-        <Button
-          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-          disabled={currentPage === totalPages}
-        >
-          Next
-        </Button>
-      </Box>
+        </Stack>
+      </Card>
     </Page>
   );
 };

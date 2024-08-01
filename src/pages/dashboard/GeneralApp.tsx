@@ -158,7 +158,8 @@ const MajorCard = ({ major }: { major: TMajor }) => {
     >
       <CardActionArea
         sx={{ height: '100%' }}
-        onClick={() => navigate(`${PATH_DASHBOARD.majors.root}/${major.id}`)} // Assuming you want the card to be clickable
+        //onClick={() => navigate(`${PATH_DASHBOARD.majors.root}/${major.id}`)}
+        onClick={() => navigate(`${PATH_DASHBOARD.courses.root}?curriculumId=${major.id}`)}
       >
         <Box
           sx={{
