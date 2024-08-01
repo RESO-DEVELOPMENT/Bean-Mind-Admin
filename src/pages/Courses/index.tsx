@@ -387,19 +387,19 @@ const CourseListPage = () => {
   ];
 
   // Data Fetching with Loading and Error Handling
-  const { data: coursesData, isLoading: coursesLoading } = useQuery(
+  const { data: coursesData, isLoading: coursesLoading, error: coursesError } = useQuery(
     'courses',
     courseApi.getCourses
   );
 
   // Fetch majors data
-  const { data: majorsData, isLoading: majorsLoading } = useQuery(
+  const { data: majorsData, isLoading: majorsLoading, error: majorsError } = useQuery(
     'majors',
     majorApi.getMajors
   );
 
    // Filtering states and functions
-   const [filteredCourses, setFilteredCourses] = useState<TCourse[]>(coursesData?.data.items || []);
+   const [filteredCourses, setFilteredCourses] = useState<TCourse[]>([]); 
    const [selectedCourseTitle, setSelectedCourseTitle] = useState<string | null>(null);
    const [selectedMajorTitle, setSelectedMajorTitle] = useState<string | null>(null);
  
@@ -439,21 +439,39 @@ const CourseListPage = () => {
      setFilteredCourses(filtered);
    };
 
-   // Get query parameters from URL
+  // Get query parameters from URL
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const initialCurriculumId = queryParams.get('curriculumId'); 
+  const initialCurriculumId = queryParams.get('curriculumId');
 
   // Set the initial selectedMajorTitle (if curriculumId is provided in URL)
   useEffect(() => {
     if (initialCurriculumId && majorsData) {
-      const major = majorsData?.data.items.find((m: { id: string; }) => m.id === initialCurriculumId);
+      const major = majorsData?.data.items.find(
+        (m: { id: string }) => m.id === initialCurriculumId
+      );
       if (major) {
-        setSelectedMajorTitle(major.title); 
-        applyFilters(selectedCourseTitle, major.title);
+        setSelectedMajorTitle(major.title);
       }
     }
-  }, [initialCurriculumId, majorsData, selectedCourseTitle]); // Run when initialCurriculumId or majorsData changes
+  }, [initialCurriculumId, majorsData]); // Run only when these change 
+
+  // Update filteredCourses whenever coursesData, selectedCourseTitle, OR selectedMajorTitle changes 
+  useEffect(() => {
+    if (coursesData) {
+      applyFilters(selectedCourseTitle, selectedMajorTitle);
+    }
+  }, [coursesData, selectedCourseTitle, selectedMajorTitle]);
+ 
+
+  // Handle loading and error states for courses
+  if (coursesLoading) {
+    return <CircularProgress />; 
+  }
+
+  if (coursesError) {
+    return <Typography color="error">Error loading courses!</Typography>;
+  } 
 
   return (
     <Page

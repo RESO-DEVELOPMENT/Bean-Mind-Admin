@@ -20,7 +20,7 @@ import useLocales from 'hooks/useLocales';
 import { get } from 'lodash';
 import { useSnackbar } from 'notistack';
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import subjectApi from 'apis/subject';
 import { PATH_DASHBOARD } from 'routes/paths';
 import { TSubject } from 'types/subject';
@@ -124,24 +124,70 @@ const SubjectListPage = () => {
   };
 
   // Filtering states and functions
-  const [filteredSubjects, setFilteredSubjects] = useState<TSubject[]>(
-    subjectsData?.data.items || []
-  );
-  const [selectedSubjectCode, setSelectedSubjectCode] = useState<string | null>(null);
+  const [filteredSubjects, setFilteredSubjects] = useState<TSubject[]>([]);
+  //const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
+  const [selectedCourseCode, setSelectedCourseCode] = useState<string | null>(null); // For Autocomplete
 
-  const handleSubjectCodeChange = (event: any, newValue: string | null) => {
-    setSelectedSubjectCode(newValue);
+  // Get query parameters from URL
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const initialCourseCode = queryParams.get('courseCode');
 
-    if (newValue) {
+  // Apply initial filter (if courseCode is provided in the URL)
+  useEffect(() => {
+    if (initialCourseCode && coursesData && subjectsData) {
+      const course = coursesData?.data.items.find(
+        (c: { courseCode: string; }) => c.courseCode.toLowerCase() === initialCourseCode.toLowerCase()
+      );
+
+      if (course) {
+        setSelectedCourseId(course.id);
+        // No need to call applyFilter here, the next useEffect will handle it
+      }
+    }
+  }, [initialCourseCode, coursesData, subjectsData]); 
+
+  // Handle course code filter change from Autocomplete
+  const handleCourseCodeChange = (event: any, newValue: string | null) => {
+    setSelectedCourseCode(newValue);
+
+    if (newValue && coursesData) {
+      const course = coursesData?.data.items.find(
+        (c: { courseCode: string; }) => c.courseCode.toLowerCase() === newValue.toLowerCase()
+      );
+
+      if (course) {
+        setSelectedCourseId(course.id); 
+      } else {
+        setSelectedCourseId(null); // Reset if no matching course
+      }
+    } else {
+      setSelectedCourseId(null); // Reset if no course code selected
+    }
+  };
+
+  // Filter function (filtering by courseId)
+  const applyFilter = (courseId: string | null) => {
+    if (courseId) {
       setFilteredSubjects(
-        subjectsData?.data.items.filter((subject: { subjectCode: string; }) =>
-          subject.subjectCode.toLowerCase().includes(newValue.toLowerCase())
-        ) || []
+        subjectsData?.data.items.filter((subject: { courseId: string; }) => subject.courseId === courseId) || []
       );
     } else {
       setFilteredSubjects(subjectsData?.data.items || []);
     }
   };
+
+  // Update filteredSubjects whenever subjectsData OR selectedCourseId changes
+  useEffect(() => {
+    if (subjectsData) {
+      applyFilter(selectedCourseId); 
+    }
+  }, [subjectsData, selectedCourseId]); 
+
+  // Handle loading state of subjectsData
+  if (subjectsLoading) { 
+    return <CircularProgress />; 
+  }
 
   return (
     <Page
@@ -246,18 +292,12 @@ const SubjectListPage = () => {
       <Stack spacing={2} sx={{ padding: 2 }}>
         {/* Autocomplete for filtering by Subject Code */}
         <Autocomplete
-          id="subject-code-filter"
-          options={
-            subjectsData?.data.items.map((subject: { subjectCode: any; }) => subject.subjectCode) || []
-          }
-          value={selectedSubjectCode}
-          onChange={handleSubjectCodeChange}
+          id="course-code-filter"
+          options={coursesData?.data.items.map((course: { courseCode: any; }) => course.courseCode) || []}
+          value={selectedCourseCode}
+          onChange={handleCourseCodeChange}
           renderInput={(params) => (
-            <TextField
-              {...params}
-              label="Filter by Subject Code"
-              variant="outlined"
-            />
+            <TextField {...params} label="Filter by Course Code" variant="outlined" />
           )}
           sx={{ width: '50%' }}
         />

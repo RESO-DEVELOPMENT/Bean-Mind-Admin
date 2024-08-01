@@ -26,7 +26,7 @@ import ResoTable from 'components/ResoTable/ResoTable';
 import useLocales from 'hooks/useLocales';
 import { get } from 'lodash';
 import { useSnackbar } from 'notistack';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 // components
 import majorApi from 'apis/major';
 import HeaderBreadcrumbs from 'components/HeaderBreadcrumbs';
@@ -193,6 +193,15 @@ const MajorListPage = () => {
     }
   };
 
+
+  // Initialize filteredMajors AFTER data is loaded
+  useEffect(() => {
+    if (majorsData) { 
+      setFilteredMajors(majorsData?.data.items || []);
+    }
+  }, [majorsData]); // Run effect when majorsData changes
+  
+  // Handle loading state
   if (isLoading) {
     return <CircularProgress />;
   }
@@ -270,13 +279,13 @@ const MajorListPage = () => {
           />
           <Grid container spacing={2} sx={{ padding: 2 }}>
             {filteredMajors.map((major: TMajor) => (
-              //Each major is a full-width row
               <Grid item xs={12} key={major.id} >
                 <Card
                   sx={{
                     display: 'flex',
                     border: '1px solid #D9D9D9',
                     backgroundColor: '#FFFFFF',
+                    flexDirection: { xs: 'column', sm: 'row' },
                   }}
                 >
                   <CardActionArea
@@ -284,20 +293,22 @@ const MajorListPage = () => {
                       display: 'flex',
                       height: '100%',
                       padding: 2,
-                      flexDirection: { xs: 'column', sm: 'row' } // Stack vertically on small screens
+                      alignItems: 'flex-start', // Align items to the top (vertical)
                     }}
-                    onClick={() => navigate(`${PATH_DASHBOARD.courses.root}`)}
+                    onClick={() => navigate(`${PATH_DASHBOARD.courses.root}?curriculumId=${major.id}`)}
                   >
-                    <Box sx={{ flexShrink: 0, width: { xs: '100%', sm: 200 } }}>
+                    {/* Image Box */}
+                    <Box sx={{ flexShrink: 0, width: { xs: '100%', sm: 200 } }}> 
                       <Avatar
                         alt={major.title}
-                        src={major.imageUrl} // Assuming your major object has an imageUrl
+                        src={major.imageUrl} 
                         variant="rounded"
-                        sx={{ width: '100%', height: 'auto' }}
+                        sx={{ width: '100%', height: 'auto' }} 
                       />
                     </Box>
 
-                    <Box sx={{ padding: 2, flexGrow: 1 }}>
+                    {/* Content Box */}
+                    <Box sx={{ padding: 2, flexGrow: 1 }}> 
                       <Typography variant="h6" sx={{ fontFamily: 'Segoe UI', fontWeight: 'bold' }}>
                         {major.title}
                       </Typography>
