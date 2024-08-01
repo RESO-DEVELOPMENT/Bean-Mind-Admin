@@ -4,9 +4,9 @@ import request from 'utils/axios';
 
 const getMajors = (params?: any) => request.get('/curriculums', { params });
 
-const getMajorById = (id: number, params?: any) => request.get(`/curriculums/${id}`, { params });
+const getMajorById = (id: string, params?: any) => request.get(`/curriculums/${id}`, { params });
 
-const remove = (id: number) => request.delete(`/curriculums/${id}`);
+const remove = (id: string) => request.delete(`/curriculums/${id}`);
 
 const add = (data: TMajor) => request.post('/curriculums', data);
 

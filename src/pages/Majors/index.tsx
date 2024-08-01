@@ -16,6 +16,9 @@ import {
   DialogContent,
   DialogTitle,
   Grid,
+  IconButton,
+  Menu,
+  MenuItem,
   Stack,
   TextField,
   Typography,
@@ -40,6 +43,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { ref, getDownloadURL, uploadBytesResumable } from 'firebase/storage';
 import { storage } from 'config';
 import { useQuery } from 'react-query';
+import moreVerticalFill from '@iconify/icons-eva/more-vertical-fill';
 
 // function groupBy(list: any, keyGetter: any) {
 //   const map = new Map();
@@ -170,6 +174,43 @@ const MajorListPage = () => {
     }
   ];
 
+  // State for the menu
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const openMenu = Boolean(anchorEl);
+
+  // State to track if a menu item was clicked
+  const [menuItemClicked, setMenuItemClicked] = useState(false); 
+
+  const [openConfirm, setOpenConfirm] = useState(false);
+  const [majorIdToDelete, setMajorIdToDelete] = useState<number | null>(null); 
+
+  const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
+    event.stopPropagation(); // Stop propagation right away
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+    setMenuItemClicked(false); // Reset flag when menu closes
+  };
+
+  // Placeholder functions for menu actions - update these!
+  const handleView = () => {
+    setMenuItemClicked(true); // Set flag when a menu item is clicked
+    console.log('View clicked!');
+    handleCloseMenu(); 
+  };
+
+  const handleEdit = () => {
+    console.log('Edit clicked!');
+    handleCloseMenu();
+  };
+
+  const handleDelete = () => {
+    console.log('Delete clicked!');
+    handleCloseMenu();
+  };
+
   // Data Fetching (Assuming similar structure to previous examples)
   const { data: majorsData, isLoading, error } = useQuery(
     'curriculums',
@@ -288,14 +329,45 @@ const MajorListPage = () => {
                     flexDirection: { xs: 'column', sm: 'row' },
                   }}
                 >
+                  {/* More Options Menu */}
+                  <IconButton 
+                    onClick={handleOpenMenu} 
+                    sx={{ 
+                      position: 'absolute', 
+                      top: 8, 
+                      right: 8, 
+                      zIndex: 1 
+                    }}
+                  >
+                    <Icon icon={moreVerticalFill} width={20} height={20} />
+                  </IconButton>
+                  <Menu
+                    id="options-menu"
+                    anchorEl={anchorEl}
+                    open={openMenu}
+                    onClose={handleCloseMenu}
+                    MenuListProps={{
+                      'aria-labelledby': 'options-button',
+                    }}
+                  >
+                    <MenuItem onClick={handleView}>View</MenuItem>
+                    <MenuItem onClick={handleEdit}>Edit</MenuItem>
+                    <MenuItem onClick={handleDelete}>Delete</MenuItem>
+                  </Menu>
+
                   <CardActionArea
-                    sx={{
+                    onClick={() => {
+                      // Only navigate if a menu item WAS NOT clicked
+                      if (!menuItemClicked) { 
+                        navigate(`${PATH_DASHBOARD.courses.root}?curriculumId=${major.id}`)
+                      }
+                    }} 
+                    sx={{ 
                       display: 'flex',
                       height: '100%',
                       padding: 2,
-                      alignItems: 'flex-start', // Align items to the top (vertical)
+                      alignItems: 'flex-start', 
                     }}
-                    onClick={() => navigate(`${PATH_DASHBOARD.courses.root}?curriculumId=${major.id}`)}
                   >
                     {/* Image Box */}
                     <Box sx={{ flexShrink: 0, width: { xs: '100%', sm: 200 } }}> 

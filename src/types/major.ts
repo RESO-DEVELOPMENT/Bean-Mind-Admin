@@ -2,7 +2,7 @@ import { TSubject } from "./subject";
 
 
 export type TMajor = {
-  id: number;
+  id: string;
   title: string;
   description: string;
   imageUrl: string;
