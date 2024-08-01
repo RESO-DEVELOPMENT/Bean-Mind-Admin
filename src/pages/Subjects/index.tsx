@@ -123,6 +123,26 @@ const SubjectListPage = () => {
     }
   };
 
+  // Filtering states and functions
+  const [filteredSubjects, setFilteredSubjects] = useState<TSubject[]>(
+    subjectsData?.data.items || []
+  );
+  const [selectedSubjectCode, setSelectedSubjectCode] = useState<string | null>(null);
+
+  const handleSubjectCodeChange = (event: any, newValue: string | null) => {
+    setSelectedSubjectCode(newValue);
+
+    if (newValue) {
+      setFilteredSubjects(
+        subjectsData?.data.items.filter((subject: { subjectCode: string; }) =>
+          subject.subjectCode.toLowerCase().includes(newValue.toLowerCase())
+        ) || []
+      );
+    } else {
+      setFilteredSubjects(subjectsData?.data.items || []);
+    }
+  };
+
   return (
     <Page
       title={`${translate('pages.subjects.listTitle')}`}
@@ -222,9 +242,30 @@ const SubjectListPage = () => {
         }
       />
 
+      {/* Subject List Display */}
+      <Stack spacing={2} sx={{ padding: 2 }}>
+        {/* Autocomplete for filtering by Subject Code */}
+        <Autocomplete
+          id="subject-code-filter"
+          options={
+            subjectsData?.data.items.map((subject: { subjectCode: any; }) => subject.subjectCode) || []
+          }
+          value={selectedSubjectCode}
+          onChange={handleSubjectCodeChange}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Filter by Subject Code"
+              variant="outlined"
+            />
+          )}
+          sx={{ width: '50%' }}
+        />
+
+
       {/* Subject Cards Display */}
       <Grid container spacing={2}> 
-        {subjectsData?.data.items.map((subject: TSubject) => (
+      {filteredSubjects.map((subject: TSubject) => (
           <Grid item xs={12} sm={6} md={4} key={subject.id}>
             <Card 
               sx={{ 
@@ -278,6 +319,7 @@ const SubjectListPage = () => {
           </Grid>
         ))}
       </Grid>
+      </Stack>
     </Page>
   );
 };
