@@ -20,6 +20,8 @@ import NavbarDocs from './NavbarDocs';
 import NavbarAccount from './NavbarAccount';
 import CollapseButton from './CollapseButton';
 
+import { useUserRole } from '../../../contexts/UserRoleContext';
+
 // ----------------------------------------------------------------------
 
 const RootStyle = styled('div')(({ theme }) => ({
@@ -40,19 +42,16 @@ type Props = {
 
 export default function NavbarVertical({ isOpenSidebar, onCloseSidebar }: Props) {
   const theme = useTheme();
-
   const { pathname } = useLocation();
-
   const isDesktop = useResponsive('up', 'lg');
-
   const { isCollapse, collapseClick, collapseHover, onToggleCollapse, onHoverEnter, onHoverLeave } =
     useCollapseDrawer();
+  const { role } = useUserRole();
 
   useEffect(() => {
     if (isOpenSidebar) {
       onCloseSidebar();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
   const renderContent = (
@@ -74,20 +73,15 @@ export default function NavbarVertical({ isOpenSidebar, onCloseSidebar }: Props)
       >
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <Logo />
-
           {isDesktop && !isCollapse && (
             <CollapseButton onToggleCollapse={onToggleCollapse} collapseClick={collapseClick} />
           )}
         </Stack>
-
         <NavbarAccount isCollapse={isCollapse} />
       </Stack>
-
       <NavSectionVertical navConfig={navConfig} isCollapse={isCollapse} />
-
       <Box sx={{ flexGrow: 1 }} />
-
-      {!isCollapse && <NavbarDocs />}
+      {!isCollapse && role === 'admin' && <NavbarDocs />} {/* Only show for admin */}
     </Scrollbar>
   );
 
@@ -111,7 +105,6 @@ export default function NavbarVertical({ isOpenSidebar, onCloseSidebar }: Props)
           {renderContent}
         </Drawer>
       )}
-
       {isDesktop && (
         <Drawer
           open
