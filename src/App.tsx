@@ -24,12 +24,11 @@ export default function App() {
         <ThemeProvider>
           <ThemeSettings>
             <NotistackProvider>
-              <UserRoleProvider>
+              
                 <ProgressBarStyle />
                 <ChartStyle />
                 <ScrollToTop />
                 <Router />
-              </UserRoleProvider>
             </NotistackProvider>
           </ThemeSettings>
         </ThemeProvider>

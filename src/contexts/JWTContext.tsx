@@ -6,6 +6,8 @@ import { isValidToken, setSession } from '../utils/jwt';
 import { ActionMap, AuthState, AuthUser, JWTContextType } from '../@types/auth';
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import jwtDecode from 'jwt-decode';
+import { useUserRole } from './UserRoleContext';
+import { set } from 'lodash';
 
 // ----------------------------------------------------------------------
 
@@ -81,21 +83,15 @@ type AuthProviderProps = {
 
 function AuthProvider({ children }: AuthProviderProps) {
   const [state, dispatch] = useReducer(JWTReducer, initialState);
-
+  const { setRole } = useUserRole();
   useEffect(() => {
     const initialize = async () => {
       try {
         const accessToken = localStorage.getItem('accessToken');
-
+        const user = JSON.parse(localStorage.getItem('user') || "{}");
         if (accessToken && isValidToken(accessToken)) {
           setSession(accessToken);
-          const user = jwtDecode<AuthUser>(accessToken);
-
-          // const response = await request.get('/users/me');
-          // const user = response?.data;
-          //localStorage.setItem('user', JSON.stringify(user));
-          console.log(user);
-
+          setRole(user.role);
           dispatch({
             type: Types.Initial,
             payload: {
@@ -133,11 +129,17 @@ function AuthProvider({ children }: AuthProviderProps) {
       username,
       password,
     });
-    const { accessToken, user } = response.data;
-
+    console.log(response.data);
+    const { accessToken, name, role , userId} = response.data;
+    setRole(role);
+    const user = {
+      name: name,
+      role: role,
+      userId: userId
+    }
     //localStorage.setItem('accessToken', accessToken);
     setSession(accessToken);
-
+    localStorage.setItem('user', JSON.stringify(user));
     dispatch({
       type: Types.Login,
       payload: {
