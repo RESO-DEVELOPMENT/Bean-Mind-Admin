@@ -154,9 +154,9 @@ export default function LoginForm() {
   });
 
   const defaultValues = {
-    username: 'beanmind',
-    password: 'beanmind',
-    remember: true,
+    username: '',
+    password: '',
+    remember: false,
   };
 
   const methods = useForm<FormValuesProps>({

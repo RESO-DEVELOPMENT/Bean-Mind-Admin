@@ -23,9 +23,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import DeleteConfirmDialog from 'components/DeleteConfirmDialog';
 import Page from 'components/Page';
-import ResoTable from 'components/ResoTable/ResoTable';
 import useLocales from 'hooks/useLocales';
 import { get } from 'lodash';
 import { useSnackbar } from 'notistack';

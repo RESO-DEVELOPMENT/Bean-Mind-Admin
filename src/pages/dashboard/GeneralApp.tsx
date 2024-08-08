@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { Box, Card, CardActionArea, Grid, Typography } from '@mui/material';
+import { Box, Card, CardActionArea, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { PATH_DASHBOARD } from 'routes/paths';
 import { TMajor } from 'types/major';
@@ -10,7 +10,6 @@ import majorApi from 'apis/major';
 import { useQuery } from 'react-query';
 
 const GeneralApp = () => {
-  const navigate = useNavigate();
   const [activeSlide, setActiveSlide] = useState(0); // Track active slide
 
   // Fetch majors data using majorApi (similar to previous examples)
@@ -118,26 +117,24 @@ const GeneralApp = () => {
 };
 
 // Banner Item Component
-const BannerItem = ({ slide, isActive }: { slide: number, isActive: boolean }) => {
-  return (
-    <Box
-      sx={{
-        height: 200, // Adjust the height as needed
-        borderRadius: 2, // Rounded corners
-        backgroundColor: isActive ? 'lightgreen' : 'lightgray', // Example colors
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        margin: '1rem', // Add margin between slides
-        overflow: 'hidden', // Hide content overflow for rounded corners
-      }}
-    >
-      <Typography variant="h5">
-        Banner {slide} - Random Text
-      </Typography>
-    </Box>
-  );
-};
+const BannerItem = ({ slide, isActive }: { slide: number, isActive: boolean }) => (
+  <Box
+    sx={{
+      height: 200, // Adjust the height as needed
+      borderRadius: 2, // Rounded corners
+      backgroundColor: isActive ? 'lightgreen' : 'lightgray', // Example colors
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      margin: '1rem', // Add margin between slides
+      overflow: 'hidden', // Hide content overflow for rounded corners
+    }}
+  >
+    <Typography variant="h5">
+      Banner {slide} - Random Text
+    </Typography>
+  </Box>
+);
 
 // Major Card Component
 const MajorCard = ({ major }: { major: TMajor }) => {
