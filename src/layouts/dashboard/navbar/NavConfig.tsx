@@ -89,11 +89,11 @@ const navConfig = [
         icon: ICONS.menuItem,
       },
       // ADMIN
-      {
-        title: 'admin',
-        path: PATH_DASHBOARD.admins.list,
-        icon: ICONS.user,
-      },
+      // {
+      //   title: 'admin',
+      //   path: PATH_DASHBOARD.admins.list,
+      //   icon: ICONS.user,
+      // },
     ],
   },
 

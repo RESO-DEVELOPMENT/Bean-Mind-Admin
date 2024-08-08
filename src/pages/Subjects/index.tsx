@@ -177,6 +177,16 @@ const SubjectListPage = () => {
     }
   };
 
+  // Subject Card Options Menu
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   // Update filteredSubjects whenever subjectsData OR selectedCourseId changes
   useEffect(() => {
     if (subjectsData) {
