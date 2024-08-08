@@ -88,7 +88,12 @@ function AuthProvider({ children }: AuthProviderProps) {
     const initialize = async () => {
       try {
         const accessToken = localStorage.getItem('accessToken');
-        const user = JSON.parse(localStorage.getItem('user') || "{}");
+        const _user = jwtDecode(accessToken || '') as any;
+        console.log(_user);
+        const user = {
+          userId: _user.nameId,
+          name: _user['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'],
+          role: _user['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'],}
         if (accessToken && isValidToken(accessToken)) {
           setSession(accessToken);
           setRole(user.role);
@@ -137,9 +142,7 @@ function AuthProvider({ children }: AuthProviderProps) {
       role: role,
       userId: userId
     }
-    //localStorage.setItem('accessToken', accessToken);
     setSession(accessToken);
-    localStorage.setItem('user', JSON.stringify(user));
     dispatch({
       type: Types.Login,
       payload: {
@@ -194,7 +197,7 @@ function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const logout = async () => {
-    // localStorage.removeItem('accessToken');
+    localStorage.removeItem('accessToken');
     // localStorage.removeItem('user');
     setSession(null);
     dispatch({ type: Types.Logout });

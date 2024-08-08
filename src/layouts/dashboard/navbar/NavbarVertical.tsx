@@ -21,6 +21,8 @@ import NavbarAccount from './NavbarAccount';
 import CollapseButton from './CollapseButton';
 
 import { useUserRole } from '../../../contexts/UserRoleContext';
+import { fil } from 'date-fns/locale';
+import { NavSectionProps } from 'components/nav-section/type';
 
 // ----------------------------------------------------------------------
 
@@ -40,13 +42,34 @@ type Props = {
   onCloseSidebar: VoidFunction;
 };
 
+type navConfig = NavSectionProps['navConfig'];
+function filterNavConfig(navConfig: navConfig, role : string) {
+
+
+  const roleAllowed: { [key: string]: string[] } = {
+    'general': ['SysAdmin', 'SysSchool','Teacher','Student','Parent'],
+    'management': ['SysAdmin', 'SysSchool','Teacher'],
+    'setting': ['SysAdmin', 'SysSchool'],
+  }
+  return navConfig.map((group) => {
+    const items = group.items;
+    const subheader = group.subheader;
+    group.items = items.filter((item) => {
+      return roleAllowed[subheader].includes(role);
+    });
+    if (group.items.length === 0) group.subheader = '';
+    return { ...group, items };
+  });
+}
+
 export default function NavbarVertical({ isOpenSidebar, onCloseSidebar }: Props) {
+  const { role } = useUserRole();
   const theme = useTheme();
   const { pathname } = useLocation();
   const isDesktop = useResponsive('up', 'lg');
+  const filteredNavConfig = filterNavConfig(navConfig, role);
   const { isCollapse, collapseClick, collapseHover, onToggleCollapse, onHoverEnter, onHoverLeave } =
     useCollapseDrawer();
-  const { role } = useUserRole();
 
   useEffect(() => {
     if (isOpenSidebar) {
@@ -79,9 +102,9 @@ export default function NavbarVertical({ isOpenSidebar, onCloseSidebar }: Props)
         </Stack>
         <NavbarAccount isCollapse={isCollapse} />
       </Stack>
-      <NavSectionVertical navConfig={navConfig} isCollapse={isCollapse} />
+      <NavSectionVertical navConfig={filteredNavConfig} isCollapse={isCollapse} />
       <Box sx={{ flexGrow: 1 }} />
-      {!isCollapse && role === 'admin' && <NavbarDocs />} {/* Only show for admin */}
+      <NavbarDocs />
     </Scrollbar>
   );
 
