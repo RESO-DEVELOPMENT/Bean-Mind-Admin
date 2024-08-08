@@ -307,50 +307,52 @@ const SubjectListPage = () => {
       <Grid container spacing={2}> 
       {filteredSubjects.map((subject: TSubject) => (
           <Grid item xs={12} sm={6} md={4} key={subject.id}>
-            <Card 
-              sx={{ 
-                border: '1px solid #D9D9D9', // Border styling
-                backgroundColor: '#FFFFFF', // Background color 
-                borderRadius: 2, // Add rounded corners (adjust value as needed) 
-                overflow: 'hidden', // Ensure rounded corners work properly
-                display: 'flex', // Enable flexbox for the card
-                flexDirection: 'column', // Stack title and content vertically
-              }}
-            >
-              <CardActionArea sx={{ height: '100%' }}> {/* Making the card clickable (optional) */}
-                <Box 
-                  sx={{ 
-                    backgroundImage: 'linear-gradient(to bottom, #e0e0e0, #ffffff)', 
-                    padding: 2, 
-                    borderBottom: '1px solid #ddd', 
-                    textAlign: 'center', // Center text within the title box
-                    height: { xs: 100, sm: 150, md: 200 }, // Adjust heights responsively.
-                    flexGrow: 2, // Title section can only take up 2/3 of the space
-                    display: 'flex', // Enable flexbox for the title box
-                    alignItems: 'center', // Center vertically
-                    justifyContent: 'center', // Center horizontally
+          <Card
+            sx={{
+              border: '1px solid #D9D9D9', // Border styling
+              backgroundColor: '#FFFFFF', // Background color 
+              borderRadius: 2, // Add rounded corners (adjust value as needed) 
+              overflow: 'hidden', // Ensure rounded corners work properly
+              display: 'flex', // Enable flexbox for the card
+              flexDirection: 'column', // Stack title and content vertically
+            }}
+          >
+            <CardActionArea sx={{ height: '100%' }}> {/* Making the card clickable (optional) */}
+              <Box
+                sx={{
+                  backgroundImage: 'url(/assets/bg_blue_gradient.jpg)', // Set background image
+                  backgroundSize: 'cover', // Cover the box with the image
+                  padding: 2,
+                  borderBottom: '1px solid #ddd',
+                  textAlign: 'center', // Center text within the title box
+                  height: { xs: 100, sm: 150, md: 200 }, // Adjust heights responsively.
+                  flexGrow: 2, // Title section can only take up 2/3 of the space
+                  display: 'flex', // Enable flexbox for the title box
+                  alignItems: 'center', // Center vertically
+                  justifyContent: 'center', // Center horizontally
+                  color: '#FFFFFF', // Ensure text is visible on the gradient background
+                }}
+              >
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontFamily: 'Segoe UI',
+                    fontWeight: 'bold',
                   }}
                 >
-                  <Typography 
-                    variant="h6" 
-                    sx={{ 
-                      fontFamily: 'Segoe UI', 
-                      fontWeight: 'bold',
-                    }}
-                  > 
-                    {subject.title} 
-                  </Typography>
-                </Box>
+                  {subject.title}
+                </Typography>
+              </Box>
 
-                <Box sx={{ padding: 2 }}> 
-                  <Typography 
-                    variant="body2" 
-                    color="text.secondary" 
-                    sx={{ fontFamily: 'sans-serif' }} // Sans-serif for description
-                  >
-                    {subject.subjectCode} <br />
-                    {subject.description}
-                  </Typography>
+              <Box sx={{ padding: 2 }}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ fontFamily: 'sans-serif' }} // Sans-serif for description
+                >
+                  {subject.subjectCode} <br />
+                  {subject.description}
+                </Typography>
 
                   {/* Your icons and text for students, videos, duration */}
                 </Box>

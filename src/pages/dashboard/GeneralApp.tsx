@@ -158,27 +158,37 @@ const MajorCard = ({ major }: { major: TMajor }) => {
     >
       <CardActionArea
         sx={{ height: '100%' }}
-        //onClick={() => navigate(`${PATH_DASHBOARD.majors.root}/${major.id}`)}
         onClick={() => navigate(`${PATH_DASHBOARD.courses.root}?curriculumId=${major.id}`)}
       >
         <Box
           sx={{
-            padding: 2,
-            borderBottom: '1px solid #ddd',
-            textAlign: 'center',
-            flexGrow: 1,          // Title takes up available space
-            display: 'flex',
-            alignItems: 'center', // Center title vertically
-            justifyContent: 'center', // Center title horizontally
+            position: 'relative', // Position relative for absolute positioning of overlay
+            height: '100%', // Fill the entire box height
+            backgroundImage: 'url(/assets/bg_blue_gradient.jpg)', // Set background image
+            backgroundSize: 'cover', // Cover the entire area
+            backgroundPosition: 'center', // Center the image
           }}
         >
-          <Typography variant="h6" sx={{ fontFamily: 'Segoe UI', fontWeight: 'bold' }}>
-            {major.title}
-          </Typography>
+          <Box
+            sx={{
+              position: 'absolute', // Position overlay over the background
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent overlay
+              display: 'flex',
+              alignItems: 'center', // Center title vertically
+              justifyContent: 'center', // Center title horizontally
+            }}
+          >
+            <Typography variant="h6" sx={{ fontFamily: 'Segoe UI', fontWeight: 'bold', color: 'white' }}>
+              {major.title}
+            </Typography>
+          </Box>
         </Box>
 
         <Box sx={{ padding: 2, flexGrow: 2 }}> {/* Description and other content */}
-          {/* You can add the major.description and other details here */}
           {major.description} <br />
         </Box>
       </CardActionArea>

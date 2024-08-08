@@ -83,7 +83,7 @@ const MajorListPage = () => {
   const methods = useForm<any>({
     defaultValues: {
       name: '',
-      imageUrl: '',
+      imageUrl: '/assets/bg_blue_gradient.jpg', //Path to the image
     },
     resolver: yupResolver(schema),
   });
@@ -179,10 +179,10 @@ const MajorListPage = () => {
   const openMenu = Boolean(anchorEl);
 
   // State to track if a menu item was clicked
-  const [menuItemClicked, setMenuItemClicked] = useState(false); 
+  const [menuItemClicked, setMenuItemClicked] = useState(false);
 
   const [openConfirm, setOpenConfirm] = useState(false);
-  const [majorIdToDelete, setMajorIdToDelete] = useState<number | null>(null); 
+  const [majorIdToDelete, setMajorIdToDelete] = useState<number | null>(null);
 
   const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation(); // Stop propagation right away
@@ -198,7 +198,7 @@ const MajorListPage = () => {
   const handleView = () => {
     setMenuItemClicked(true); // Set flag when a menu item is clicked
     console.log('View clicked!');
-    handleCloseMenu(); 
+    handleCloseMenu();
   };
 
   const handleEdit = () => {
@@ -237,11 +237,11 @@ const MajorListPage = () => {
 
   // Initialize filteredMajors AFTER data is loaded
   useEffect(() => {
-    if (majorsData) { 
+    if (majorsData) {
       setFilteredMajors(majorsData?.data.items || []);
     }
   }, [majorsData]); // Run effect when majorsData changes
-  
+
   // Handle loading state
   if (isLoading) {
     return <CircularProgress />;
@@ -330,13 +330,13 @@ const MajorListPage = () => {
                   }}
                 >
                   {/* More Options Menu */}
-                  <IconButton 
-                    onClick={handleOpenMenu} 
-                    sx={{ 
-                      position: 'absolute', 
-                      top: 8, 
-                      right: 8, 
-                      zIndex: 1 
+                  <IconButton
+                    onClick={handleOpenMenu}
+                    sx={{
+                      position: 'absolute',
+                      top: 8,
+                      right: 8,
+                      zIndex: 1
                     }}
                   >
                     <Icon icon={moreVerticalFill} width={20} height={20} />
@@ -358,29 +358,29 @@ const MajorListPage = () => {
                   <CardActionArea
                     onClick={() => {
                       // Only navigate if a menu item WAS NOT clicked
-                      if (!menuItemClicked) { 
+                      if (!menuItemClicked) {
                         navigate(`${PATH_DASHBOARD.courses.root}?curriculumId=${major.id}`)
                       }
-                    }} 
-                    sx={{ 
+                    }}
+                    sx={{
                       display: 'flex',
                       height: '100%',
                       padding: 2,
-                      alignItems: 'flex-start', 
+                      alignItems: 'flex-start',
                     }}
                   >
                     {/* Image Box */}
-                    <Box sx={{ flexShrink: 0, width: { xs: '100%', sm: 200 } }}> 
+                    <Box sx={{ flexShrink: 0, width: { xs: '100%', sm: 200 } }}>
                       <Avatar
                         alt={major.title}
-                        src={major.imageUrl} 
+                        src={major.imageUrl || '/assets/bg_blue_gradient.jpg'}  // Fallback to the image if no URL
                         variant="rounded"
-                        sx={{ width: '100%', height: 'auto' }} 
+                        sx={{ width: '100%', height: 'auto' }}
                       />
                     </Box>
 
                     {/* Content Box */}
-                    <Box sx={{ padding: 2, flexGrow: 1 }}> 
+                    <Box sx={{ padding: 2, flexGrow: 1 }}>
                       <Typography variant="h6" sx={{ fontFamily: 'Segoe UI', fontWeight: 'bold' }}>
                         {major.title}
                       </Typography>

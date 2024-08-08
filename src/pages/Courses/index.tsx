@@ -177,81 +177,6 @@ const CourseListPage = () => {
         });
       });
 
-
-  // title: string;
-  // description: string;
-  // startDate: Date;
-  // endDate: Date;
-  // curriculumId: string;
-  // insDate: Date;
-  // updDate: Date;
-  // delFlg: boolean;
-  //với comlumns là những thuộc tính trên hãy viết lại cho phù hợp  với dữ liệu trả về từ api
-  // const columns = [
-  //   {
-  //     title: 'STT',
-  //     dataIndex: 'id',
-  //     hideInSearch: true,
-  //   },
-  //   {
-  //     title: 'Chủ đề',
-  //     dataIndex: 'title',
-  //   },
-  //   {
-  //     title: 'Mô tả',
-  //     dataIndex: 'description',
-  //   },
-  //   {
-  //     title: 'Ngày bắt đầu',
-  //     dataIndex: 'startDate',
-  //   },
-  //   {
-  //     title: 'Ngày kết thúc',
-  //     dataIndex: 'end',
-  //   },
-  //   {
-  //     title: translate('common.table.isAvailable'),
-  //     dataIndex: 'status',
-  //     render: (status: any) => (
-  //       <Label
-  //         color={
-  //           status === 2
-  //             ? 'warning'
-  //             : status === 3
-  //             ? 'info'
-  //             : status === 5
-  //             ? 'secondary'
-  //             : status === 6
-  //             ? 'success'
-  //             : 'default'
-  //         }
-  //       >
-  //         {status === 2
-  //           ? 'Chờ duyệt'
-  //           : status === 5
-  //           ? translate('common.available')
-  //           : status === 3
-  //           ? 'Chờ đủ mentee'
-  //           : status === 6
-  //           ? 'Đã hoàn thành'
-  //           : 'Đã huỷ'}
-  //       </Label>
-  //     ),
-  //     hideInSearch: true,
-  //   },
-  //   {
-  //     title: 'Môn học',
-  //     dataIndex: 'subject.name',
-  //     hideInSearch: true,
-  //   },
-  //   {
-  //     title: 'Giảng viên',
-  //     dataIndex: 'mentor.fullName',
-  //     hideInSearch: true,
-  //   },
-  //   {
-  //     title: 'Số lượng tham gia',
-  //     dataIndex: 'currentNumberMentee',
   const columns = [
     {
       title: 'STT',
@@ -332,58 +257,7 @@ const CourseListPage = () => {
       render: (quantity: any) => <Label color={'default'}>{quantity}</Label>,
       hideInSearch: true,
     },
-    // {
-    //   title: 'Xác thực',
-    //   dataIndex: 'isVerified',
-    //   hideInSearch: true,
-    //   render: (isVeri: any) => (
-    //     <Iconify
-    //       icon={isVeri ? 'eva:checkmark-circle-fill' : 'eva:clock-outline'}
-    //       sx={{
-    //         width: 20,
-    //         height: 20,
-    //         color: 'success.main',
-    //         ...(!isVeri && { color: 'warning.main' }),
-    //       }}
-    //     />
-    //   ),
-    // },
-    // {
-    //   title: 'Ngày',
-    //   dataIndex: 'createdAt',
-    //   valueType: 'date',
-    //   hideInTable: true,
-    // },
-    // {
-    //   title: 'Giờ',
-    //   dataIndex: 'createdAt',
-    //   valueType: 'time',
-    //   hideInTable: true,
-    // },
-    // {
-    //   title: 'Ngày bắt đầu',
-    //   dataIndex: 'startDate',
-    //   valueType: 'datetime',
-    //   hideInSearch: true,
-    // },
-    // {
-    //   title: 'Ngày kết thúc',
-    //   dataIndex: 'finishDate',
-    //   valueType: 'datetime',
-    //   hideInSearch: true,
-    // },
-    // {
-    //   title: 'Ngày cập nhật',
-    //   dataIndex: 'updateDate',
-    //   valueType: 'datetime',
-    //   hideInSearch: true,
-    // },
-    // {
-    //   title: 'Ngày tạo',
-    //   dataIndex: 'createDate',
-    //   valueType: 'datetime',
-    //   hideInSearch: true,
-    // },
+
   ];
 
   // Data Fetching with Loading and Error Handling
@@ -555,18 +429,20 @@ const CourseListPage = () => {
                   flexDirection: 'column',
                 }}
               >
-                <CardActionArea 
-                  sx={{ height: '100%' }} 
-                  //onClick={() => navigate(`${PATH_DASHBOARD.courses.root}/${course.id}/view`)}
-                  onClick={() => navigate(`${PATH_DASHBOARD.subjects.root}?courseCode=${course.courseCode}`)}
-                >
+                <CardActionArea
+                    sx={{ height: '100%' }}
+                    onClick={() => navigate(`${PATH_DASHBOARD.subjects.root}?courseCode=${course.courseCode}`)}
+                  >
                     <Box
                       sx={{
-                        backgroundImage: 'linear-gradient(to bottom, #e0e0e0, #ffffff)',
+                        backgroundImage: 'url(/assets/bg_blue_gradient.jpg)', // Set background image
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
                         padding: 2,
                         borderBottom: '1px solid #ddd',
                         textAlign: 'center',
                         flexGrow: 2,
+                        height: '66%', // Take up 2/3 of the CardActionArea
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -577,6 +453,7 @@ const CourseListPage = () => {
                         sx={{
                           fontFamily: 'Segoe UI',
                           fontWeight: 'bold',
+                          color: '#FFFFFF', // Make the text white for better contrast
                         }}
                       >
                         {course.title}
@@ -588,13 +465,10 @@ const CourseListPage = () => {
                         {course.description}
                       </Typography>
 
-                      {/* Display other relevant course details here */}
                       <Typography variant="body2">
                         {/* Mentor: {course.mentor?.fullName} */}
                       </Typography>
-                      {/* ... add more course details as needed ... */}
 
-                      {/* Add buttons/actions for each course here */}
                       <IconButton
                         onClick={(event) => {
                           event.stopPropagation(); // Prevent card click from triggering
@@ -604,7 +478,6 @@ const CourseListPage = () => {
                       >
                         <Icon icon={eyeFill} width={20} height={20} />
                       </IconButton>
-                      {/* Add other action buttons similarly */}
                     </Box>
                   </CardActionArea>
                 </Card>
