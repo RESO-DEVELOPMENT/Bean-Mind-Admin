@@ -11,6 +11,7 @@ import ThemeSettings from './components/settings';
 import Router from './routes';
 // theme
 import ThemeProvider from './theme';
+import { UserRoleProvider } from 'contexts/UserRoleContext';
 
 // ----------------------------------------------------------------------
 
@@ -23,10 +24,11 @@ export default function App() {
         <ThemeProvider>
           <ThemeSettings>
             <NotistackProvider>
-              <ProgressBarStyle />
-              <ChartStyle />
-              <ScrollToTop />
-              <Router />
+              
+                <ProgressBarStyle />
+                <ChartStyle />
+                <ScrollToTop />
+                <Router />
             </NotistackProvider>
           </ThemeSettings>
         </ThemeProvider>

@@ -19,8 +19,8 @@ import Page from 'components/Page';
 import useLocales from 'hooks/useLocales';
 import { get } from 'lodash';
 import { useSnackbar } from 'notistack';
-import { useEffect, useRef, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import subjectApi from 'apis/subject';
 import { PATH_DASHBOARD } from 'routes/paths';
 import { TSubject } from 'types/subject';
@@ -37,9 +37,6 @@ const SubjectListPage = () => {
   const [currentDeleteItem, setCurrentDeleteItem] = useState<TSubject | null>(null);
   const [currentUpdateItem, setCurrentUpdateItem] = useState<TSubject | null>(null);
   const [formModal, setFormModal] = useState(false);
-
-  const [isUpdate, setIsUpdate] = useState(false);
-  const { id } = useParams();
 
   // Subjects Data
   const { data: subjectsData, isLoading: subjectsLoading } = useQuery(

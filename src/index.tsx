@@ -52,27 +52,30 @@ import { AuthProvider } from './contexts/JWTContext';
 import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
+import { UserRoleProvider } from 'contexts/UserRoleContext';
 
 // ----------------------------------------------------------------------
 
 ReactDOM.render(
-  <AuthProvider>
-    <HelmetProvider>
-      <ReduxProvider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <SettingsProvider>
-              <CollapseDrawerProvider>
-                <BrowserRouter>
-                  <App />
-                </BrowserRouter>
-              </CollapseDrawerProvider>
-            </SettingsProvider>
-          </LocalizationProvider>
-        </PersistGate>
-      </ReduxProvider>
-    </HelmetProvider>
-  </AuthProvider>,
+  <UserRoleProvider>
+    <AuthProvider>
+      <HelmetProvider>
+        <ReduxProvider store={store}>
+          <PersistGate loading={null} persistor={persistor}>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <SettingsProvider>
+                <CollapseDrawerProvider>
+                  <BrowserRouter>
+                    <App />
+                  </BrowserRouter>
+                </CollapseDrawerProvider>
+              </SettingsProvider>
+            </LocalizationProvider>
+          </PersistGate>
+        </ReduxProvider>
+      </HelmetProvider>
+    </AuthProvider>
+  </UserRoleProvider>,
   document.getElementById('root')
 );
 

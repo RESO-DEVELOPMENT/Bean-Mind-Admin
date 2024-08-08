@@ -8,6 +8,8 @@ import { HEADER } from '../../../config';
 import { NavSectionHorizontal } from '../../../components/nav-section';
 //
 import navConfig from './NavConfig';
+import { NavSectionProps } from 'components/nav-section/type';
+import { useUserRole } from 'contexts/UserRoleContext';
 
 // ----------------------------------------------------------------------
 
@@ -26,12 +28,32 @@ const RootStyle = styled(AppBar)(({ theme }) => ({
 }));
 
 // ----------------------------------------------------------------------
+type navConfig = NavSectionProps['navConfig'];
+function filterNavConfig(navConfig: navConfig, role : string) {
 
+
+  const roleAllowed: { [key: string]: string[] } = {
+    'general': ['SysAdmin', 'SysSchool','Teacher','Student','Parent'],
+    'management': ['SysAdmin', 'SysSchool','Teacher'],
+    'setting': ['SysAdmin', 'SysSchool'],
+  }
+  return navConfig.map((group) => {
+    const items = group.items;
+    const subheader = group.subheader;
+    group.items = items.filter((item) => {
+      return roleAllowed[subheader].includes(role);
+    });
+    if (group.items.length === 0) group.subheader = '';
+    return { ...group, items };
+  });
+}
 function NavbarHorizontal() {
+  const { role } = useUserRole();
+  const filteredNavConfig = filterNavConfig(navConfig, role);
   return (
     <RootStyle>
       <Container maxWidth={false}>
-        <NavSectionHorizontal navConfig={navConfig} />
+        <NavSectionHorizontal navConfig={filteredNavConfig} />
       </Container>
     </RootStyle>
   );

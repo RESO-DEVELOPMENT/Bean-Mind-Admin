@@ -48,7 +48,7 @@ export type TMentee = {
   insDate?: Date | null;
   updDate?: Date | null;
   delFlg?: boolean | null;
-}
+};
 
 export type TAdmin = {
   id: string;
@@ -66,3 +66,11 @@ export type TAdmin = {
   badge: number;
   roleId: number;
 };
+
+export enum UserRole {
+  SysAdmin = 'SysAdmin',
+  SysSchool = 'SysSchool',
+  Teacher = 'Teacher',
+  Student = 'Student',
+  Parent = 'Parent',
+}
