@@ -1,24 +1,46 @@
-import { TUser } from 'types/user';
+import { TMentee } from 'types/user';
 import { generateAPIWithPaging } from './utils';
 import request from 'utils/axios';
 
-const getUsers = (params?: any) => request.get('/admin/users', { params });
+const getStudents = (params?: any) => request.get('/students', { params });
 
-const getUserById = (id: number, params?: any) => request.get(`/admin/users/${id}`, { params });
+const getStudentById = (id: string, params?: any) => request.get(`/students/${id}`, { params });
 
-const remove = (id: number) => request.delete(`/admin/users/${id}`);
+const remove = (id: string) => request.delete(`/students/${id}`);
 
-const add = (data: any) => request.post('/admin/users', data);
+//const add = (data: any) => request.post('/students', data);
+const add = (data: any, parentId?: string, courseId?: string) =>
+  request.post(
+    '/students',
+    data,
+    {
+      params: {
+        parentId,
+        courseId,
+      },
+    }
+  );
 
-const update = (data: TUser) => request.put(`/admin/users`, data);
+//const update = (data: TMentee) => request.put(`/students`, data);
+const update = (id: string, data: Partial<TMentee>, parentId?: string, courseId?: string) =>
+  request.patch(
+    `/students/${id}`,
+    data, 
+    {
+      params: {
+        parentId,
+        courseId
+      }
+    }
+  );
 
-const userApi = {
-  ...generateAPIWithPaging<TUser>('courses'),
-  getUsers,
-  getUserById,
+const studentApi = {
+  ...generateAPIWithPaging<TMentee>('students'),
+  getStudents,
+  getStudentById,
   remove,
   add,
   update,
 };
 
-export default userApi;
+export default studentApi;

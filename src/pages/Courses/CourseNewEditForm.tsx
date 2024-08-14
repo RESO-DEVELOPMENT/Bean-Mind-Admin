@@ -29,7 +29,7 @@ import {
   RHFSwitch,
   RHFRadioGroup,
   RHFSelect,
-  RHFUploadSingleFile,
+  RHFUploadSingleFile
 } from 'components/hook-form';
 import { LoadingButton, MobileDateTimePicker, DateTimePicker } from '@mui/lab';
 import ModalSubjectForm from './components/ModalSubjectForm';
@@ -203,7 +203,7 @@ function CourseNewEditForm({ isEdit }: Props) {
 
   const { data: course, isLoading } = useQuery(
     ['course', id],
-    () => courseApi.getCourseById(Number(id)),
+    () => courseApi.getCourseById(String(id)),
     {
       select: (res) => res.data,
     }
@@ -228,7 +228,7 @@ function CourseNewEditForm({ isEdit }: Props) {
 
   const values = watch();
 
-  const isDateError = isBefore(new Date(values.finishDate), new Date(values.startDate));
+  const isDateError = isBefore(new Date(values.endDate), new Date(values.startDate));
   const products = watch('name');
   const setProducts = (products: any) => {
     setValue('name', products);
@@ -501,7 +501,7 @@ function CourseNewEditForm({ isEdit }: Props) {
 
                     <Grid xs={12}>
                       <Controller
-                        name="finishedDate"
+                        name="endDate"
                         control={control}
                         render={({ field }) => (
                           <DateTimePicker

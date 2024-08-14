@@ -16,7 +16,7 @@ const vn = {
     documentation: `tài liệu`,
   },
   dashboard: `Trang chủ`,
-  app: `ứng dụng`,
+  app: `Trang chủ`,
   user: `người dùng`,
   list: `Danh sách`,
   edit: `chỉnh sửa`,
@@ -72,6 +72,12 @@ const vn = {
     subjects: {
       listTitle: 'Môn học',
       addBtn: 'Tạo môn học',
+    },
+  },
+  studentPages: {
+    users: {
+      listTitle: 'Học Sinh',
+      addBtn: 'Thêm Học Sinh',
     },
   },
 };

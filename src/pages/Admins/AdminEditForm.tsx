@@ -1,7 +1,7 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { LoadingButton } from '@mui/lab';
 import { Box, Card, Grid, Stack, Typography } from '@mui/material';
-import userApi from 'apis/user';
+import studentApi from 'apis/user';
 import { AutoCompleteField } from 'components/form';
 import HeaderBreadcrumbs from 'components/HeaderBreadcrumbs';
 import { FormProvider, RHFTextField, RHFUploadAvatar } from 'components/hook-form';
@@ -19,6 +19,7 @@ import { fData } from 'utils/formatNumber';
 import * as yup from 'yup';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { storage } from 'config';
+import teacherApi from 'apis/mentor';
 
 // ----------------------------------------------------------------------
 
@@ -52,7 +53,7 @@ function AdminEditForm() {
     // price: yup.number().moreThan(0, 'Price should not be $0.00'),
   });
 
-  const { data: user } = useQuery(['user', id], () => userApi.getUserById(Number(id)), {
+  const { data: user } = useQuery(['user', id], () => studentApi.getStudentById(String(id)), {
     select: (res) => res.data,
   });
 
@@ -137,7 +138,7 @@ function AdminEditForm() {
 
   const onSubmit = async (user: TAdmin) => {
     try {
-      await userApi
+      await teacherApi
         .update(user!)
         .then(() =>
           enqueueSnackbar(`Cập nhât thành công`, {
@@ -174,7 +175,7 @@ function AdminEditForm() {
           // download url
           getDownloadURL(uploadTask.snapshot.ref).then((url) => {
             console.log(url);
-            setValue('imageUrl', url);
+            setValue('imgUrl', url);
           });
         }
       );

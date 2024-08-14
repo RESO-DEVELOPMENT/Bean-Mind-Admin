@@ -1,7 +1,7 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { LoadingButton } from '@mui/lab';
 import { Box, Card, Grid, Stack, Typography } from '@mui/material';
-import userApi from 'apis/user';
+import teacherApi from 'apis/mentor';
 import { AutoCompleteField } from 'components/form';
 import HeaderBreadcrumbs from 'components/HeaderBreadcrumbs';
 import { FormProvider, RHFTextField, RHFUploadAvatar } from 'components/hook-form';
@@ -52,7 +52,7 @@ function MentorEditForm() {
     // price: yup.number().moreThan(0, 'Price should not be $0.00'),
   });
 
-  const { data: user } = useQuery(['user', id], () => userApi.getUserById(Number(id)), {
+  const { data: user } = useQuery(['user', id], () => teacherApi.getTeacherById(String(id)), {
     select: (res) => res.data,
   });
 
@@ -137,7 +137,7 @@ function MentorEditForm() {
 
   const onSubmit = async (user: TMentor) => {
     try {
-      await userApi
+      await teacherApi
         .update(user!)
         .then(() =>
           enqueueSnackbar(`Cập nhât thành công`, {

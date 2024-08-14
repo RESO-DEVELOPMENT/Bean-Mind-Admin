@@ -6,6 +6,8 @@ import { isValidToken, setSession } from '../utils/jwt';
 import { ActionMap, AuthState, AuthUser, JWTContextType } from '../@types/auth';
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import jwtDecode from 'jwt-decode';
+import { useUserRole } from './UserRoleContext';
+import { set } from 'lodash';
 
 // ----------------------------------------------------------------------
 
@@ -81,27 +83,24 @@ type AuthProviderProps = {
 
 function AuthProvider({ children }: AuthProviderProps) {
   const [state, dispatch] = useReducer(JWTReducer, initialState);
-
+  const { setRole } = useUserRole();
   useEffect(() => {
     const initialize = async () => {
       try {
-        const token : string = localStorage.getItem('accessToken') || "";
-        const _token = JSON.parse(token);
-        const {accessToken, user} = _token;
-        console.log("accessToken", accessToken);
-        console.log("user", user);
+        const accessToken = localStorage.getItem('accessToken');
+        const _user = jwtDecode(accessToken || '') as any;
+        console.log(_user);
+        const user = {
+          userId: _user.nameId,
+          name: _user['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'],
+          role: _user['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'],}
         if (accessToken && isValidToken(accessToken)) {
-          console.log('lưu lại token access')
-          setSession(JSON.stringify(_token));
-
-          // const response = await request.get('/users/me');
-          // const user = response?.data;
-          console.log(user);
-
+          setSession(accessToken);
+          setRole(user.role);
           dispatch({
             type: Types.Initial,
             payload: {
-              isAuthenticated:true,
+              isAuthenticated: true,
               user,
             },
           });
@@ -114,6 +113,7 @@ function AuthProvider({ children }: AuthProviderProps) {
             },
           });
         }
+
       } catch (err) {
         console.error(err);
         dispatch({
@@ -135,22 +135,18 @@ function AuthProvider({ children }: AuthProviderProps) {
       password,
     });
     console.log(response.data);
-    const { accessToken, name, role, userId , user} = response.data;
-    const token = {
-      "accessToken" : accessToken,
-      "user": {
-        "name": name,
-        "role": role,
-        "userId": userId
-      }
+    const { accessToken, name, role , userId} = response.data;
+    setRole(role);
+    const user = {
+      name: name,
+      role: role,
+      userId: userId
     }
-    console.log(token)
-    setSession(JSON.stringify(token));
-    
+    setSession(accessToken);
     dispatch({
       type: Types.Login,
       payload: {
-        user
+        user,
       },
     });
   };
@@ -201,6 +197,8 @@ function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const logout = async () => {
+    localStorage.removeItem('accessToken');
+    // localStorage.removeItem('user');
     setSession(null);
     dispatch({ type: Types.Logout });
   };

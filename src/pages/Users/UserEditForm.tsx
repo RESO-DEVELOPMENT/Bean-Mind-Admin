@@ -1,7 +1,7 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { LoadingButton } from '@mui/lab';
 import { Box, Card, Grid, Stack, Typography } from '@mui/material';
-import userApi from 'apis/user';
+import studentApi from 'apis/user';
 import { AutoCompleteField } from 'components/form';
 import HeaderBreadcrumbs from 'components/HeaderBreadcrumbs';
 import { FormProvider, RHFTextField, RHFUploadAvatar } from 'components/hook-form';
@@ -14,7 +14,7 @@ import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { PATH_DASHBOARD } from 'routes/paths';
-import { TUser } from 'types/user';
+import { TMentee } from 'types/user';
 import { fData } from 'utils/formatNumber';
 import * as yup from 'yup';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
@@ -52,11 +52,11 @@ function UserEditForm() {
     // price: yup.number().moreThan(0, 'Price should not be $0.00'),
   });
 
-  const { data: user } = useQuery(['user', id], () => userApi.getUserById(Number(id)), {
+  const { data: user } = useQuery(['students', id], () => studentApi.getStudentById(String(id)), {
     select: (res) => res.data,
   });
 
-  const methods = useForm<TUser>({
+  const methods = useForm<TMentee>({
     resolver: yupResolver(schema),
     defaultValues: {
       ...user,
@@ -135,10 +135,16 @@ function UserEditForm() {
     return option;
   };
 
-  const onSubmit = async (user: TUser) => {
+  //placeholder
+  const onSubmit = async (user: TMentee) => {
     try {
-      await userApi
-        .update(user!)
+      //placeholder logic
+      const userId = user.id;
+      const parentId = user.parentId !== null ? user.parentId : undefined;
+      const courseId = '';
+
+      await studentApi
+        .update(userId, user, parentId, courseId)
         .then(() =>
           enqueueSnackbar(`Cập nhât thành công`, {
             variant: 'success',
@@ -174,7 +180,7 @@ function UserEditForm() {
           // download url
           getDownloadURL(uploadTask.snapshot.ref).then((url) => {
             console.log(url);
-            setValue('imageUrl', url);
+            setValue('imgUrl', url);
           });
         }
       );
@@ -195,7 +201,7 @@ function UserEditForm() {
                 { name: `${translate('dashboard')}`, href: PATH_DASHBOARD.root },
                 {
                   name: `Người dùng`,
-                  href: PATH_DASHBOARD.courses.root,
+                  href: PATH_DASHBOARD.users.root,
                 },
                 { name: `${user?.fullName}` },
               ]}

@@ -37,7 +37,7 @@ function UpdateMajorPage() {
   const { id } = useParams();
 
   const { enqueueSnackbar } = useSnackbar();
-  const { data: major } = useQuery(['major', Number(id)], () => majorApi.getMajorById(Number(id)), {
+  const { data: major } = useQuery(['major', Number(id)], () => majorApi.getMajorById(String(id)), {
     select: (res) => res.data,
   });
   console.log('major', major);

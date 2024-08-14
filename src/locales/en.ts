@@ -74,6 +74,12 @@ const en = {
       addBtn: 'Add subject',
     },
   },
+  studentPages: {
+    users: {
+      listTitle: 'Students',
+      addBtn: 'Add student',
+    },
+  },
 };
 
 export default en;

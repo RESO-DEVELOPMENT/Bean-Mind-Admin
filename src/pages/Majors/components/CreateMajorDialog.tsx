@@ -54,7 +54,7 @@ const MajorCreateForm: React.FC<Props> = ({
     resolver: yupResolver(schema),
     shouldUnregister: true,
     defaultValues: {
-      name: '',
+      title: '',
       imageUrl: '',
     },
   });

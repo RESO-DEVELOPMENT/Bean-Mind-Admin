@@ -64,6 +64,7 @@ export default function Router() {
     {
       path: 'dashboard',
       element: (
+        
         <AuthGuard>
           <DashboardLayout />
         </AuthGuard>
@@ -95,6 +96,10 @@ export default function Router() {
             {
               path: 'new',
               element: <SubjectListPage />,
+            },
+            {
+              path: ':id/view',
+              element: <SubjectViewEditForm />,
             },
             { path: ':id', element: <SubjectListPage /> },
           ],
@@ -158,28 +163,17 @@ export default function Router() {
             { path: ':id', element: <UpdateMajorPage /> },
           ],
         },
-        {
-          path: 'orders',
-          children: [
-            { path: '', element: <OrderListPage /> },
-            {
-              path: 'new',
-              element: <OrderListPage />,
-            },
-            { path: ':id', element: <OrderListPage /> },
-          ],
-        },
-        {
-          path: 'certificates',
-          children: [
-            { path: '', element: <CertificateListPage /> },
-            {
-              path: 'new',
-              element: <CertificateListPage />,
-            },
-            { path: ':id', element: <CertificateEditForm /> },
-          ],
-        },
+        // {
+        //   path: 'certificates',
+        //   children: [
+        //     { path: '', element: <CertificateListPage /> },
+        //     {
+        //       path: 'new',
+        //       element: <CertificateListPage />,
+        //     },
+        //     { path: ':id', element: <CertificateEditForm /> },
+        //   ],
+        // },
         {
           path: 'user',
           children: [
@@ -330,6 +324,7 @@ const Page404 = Loadable(lazy(() => import('../pages/Page404')));
 
 // SUBJECT
 const SubjectListPage = Loadable(lazy(() => import('../pages/Subjects')));
+const SubjectViewEditForm = Loadable(lazy(() => import('../pages/Subjects/SubjectViewEditForm')));
 
 // COURSE
 const CourseListPage = Loadable(lazy(() => import('../pages/Courses')));
@@ -352,9 +347,4 @@ const MajorListPage = Loadable(lazy(() => import('../pages/Majors')));
 const MajorCreatePage = Loadable(lazy(() => import('../pages/Majors/CreateMajor')));
 const UpdateMajorPage = Loadable(lazy(() => import('../pages/Majors/UpdateMajor')));
 
-// ORDER
-const OrderListPage = Loadable(lazy(() => import('../pages/Orders')));
-const CertificateListPage = Loadable(lazy(() => import('../pages/Certificates')));
-const CertificateEditForm = Loadable(
-  lazy(() => import('../pages/Certificates/components/EditCertificateForm'))
-);
+

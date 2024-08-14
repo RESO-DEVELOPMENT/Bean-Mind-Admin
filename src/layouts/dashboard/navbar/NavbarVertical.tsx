@@ -20,6 +20,10 @@ import NavbarDocs from './NavbarDocs';
 import NavbarAccount from './NavbarAccount';
 import CollapseButton from './CollapseButton';
 
+import { useUserRole } from '../../../contexts/UserRoleContext';
+import { fil } from 'date-fns/locale';
+import { NavSectionProps } from 'components/nav-section/type';
+
 // ----------------------------------------------------------------------
 
 const RootStyle = styled('div')(({ theme }) => ({
@@ -38,13 +42,32 @@ type Props = {
   onCloseSidebar: VoidFunction;
 };
 
+type navConfig = NavSectionProps['navConfig'];
+function filterNavConfig(navConfig: navConfig, role : string) {
+
+
+  const roleAllowed: { [key: string]: string[] } = {
+    'general': ['SysAdmin', 'SysSchool','Teacher','Student','Parent'],
+    'management': ['SysAdmin', 'SysSchool','Teacher'],
+    'setting': ['SysAdmin', 'SysSchool'],
+  }
+  return navConfig.map((group) => {
+    const items = group.items;
+    const subheader = group.subheader;
+    group.items = items.filter((item) => {
+      return roleAllowed[subheader].includes(role);
+    });
+    if (group.items.length === 0) group.subheader = '';
+    return { ...group, items };
+  });
+}
+
 export default function NavbarVertical({ isOpenSidebar, onCloseSidebar }: Props) {
+  const { role } = useUserRole();
   const theme = useTheme();
-
   const { pathname } = useLocation();
-
   const isDesktop = useResponsive('up', 'lg');
-
+  const filteredNavConfig = filterNavConfig(navConfig, role);
   const { isCollapse, collapseClick, collapseHover, onToggleCollapse, onHoverEnter, onHoverLeave } =
     useCollapseDrawer();
 
@@ -52,7 +75,6 @@ export default function NavbarVertical({ isOpenSidebar, onCloseSidebar }: Props)
     if (isOpenSidebar) {
       onCloseSidebar();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
   const renderContent = (
@@ -74,20 +96,15 @@ export default function NavbarVertical({ isOpenSidebar, onCloseSidebar }: Props)
       >
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <Logo />
-
           {isDesktop && !isCollapse && (
             <CollapseButton onToggleCollapse={onToggleCollapse} collapseClick={collapseClick} />
           )}
         </Stack>
-
         <NavbarAccount isCollapse={isCollapse} />
       </Stack>
-
-      <NavSectionVertical navConfig={navConfig} isCollapse={isCollapse} />
-
+      <NavSectionVertical navConfig={filteredNavConfig} isCollapse={isCollapse} />
       <Box sx={{ flexGrow: 1 }} />
-
-      {!isCollapse && <NavbarDocs />}
+      <NavbarDocs />
     </Scrollbar>
   );
 
@@ -111,7 +128,6 @@ export default function NavbarVertical({ isOpenSidebar, onCloseSidebar }: Props)
           {renderContent}
         </Drawer>
       )}
-
       {isDesktop && (
         <Drawer
           open

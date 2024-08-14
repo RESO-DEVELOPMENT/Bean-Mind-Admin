@@ -33,9 +33,9 @@ import { useSnackbar } from 'notistack';
 import { useEffect, useRef, useState } from 'react';
 // components
 import { useNavigate } from 'react-router-dom';
-import userApi from 'apis/user';
+import studentApi from 'apis/user';
 import { PATH_DASHBOARD } from 'routes/paths';
-import { TUser } from 'types/user';
+import { TMentee } from 'types/user';
 import { FormProvider, useForm, UseFormReturn } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -48,6 +48,7 @@ import { TabContext, TabList } from '@mui/lab';
 import { type } from 'os';
 import axios from 'axios';
 import request from 'utils/axios';
+import format from 'date-fns/format';
 
 const STATUS_OPTIONS = ['Tất cả', 'Đã duyệt', 'Chờ duyệt', 'Đã huỷ'];
 
@@ -75,11 +76,11 @@ const UserListPage = () => {
   const navigate = useNavigate();
   const { translate } = useLocales();
   const { enqueueSnackbar } = useSnackbar();
-  const [currentItem, setCurrentItem] = useState<TUser | null>(null);
+  const [currentItem, setCurrentItem] = useState<TMentee | null>(null);
   const [activeTab, setActiveTab] = useState('1');
   const ref = useRef<{ reload: Function; formControl: UseFormReturn<any> }>();
 
-  const { data: allData } = useQuery('users', () => request.get('/admin/users?role-id=1'), {
+  const { data: allData } = useQuery('students', () => request.get('students'), {
     select: (res) => res.data.data,
   });
   const pending = groupBy(allData, (data: any) => data.isPending);
@@ -98,7 +99,7 @@ const UserListPage = () => {
   const schema = yup.object().shape({
     name: yup.string().required('Vui lòng nhập tên khoá học'),
   });
-  const courseForm = useForm<TUser>({
+  const courseForm = useForm<TMentee>({
     resolver: yupResolver(schema),
     shouldUnregister: true,
     // defaultValues: { ...data },
@@ -113,7 +114,7 @@ const UserListPage = () => {
   // }, [data, reset]);
 
   const deleteSubjectHandler = () =>
-    userApi
+    studentApi
       .delete(currentItem?.id!)
       .then(() => setCurrentItem(null))
       .then(() => ref.current?.reload)
@@ -129,21 +130,41 @@ const UserListPage = () => {
         });
       });
 
-  const updateCourseHandler = (user: TUser) =>
-    userApi
-      .update(user!)
+  // const updateCourseHandler = (user: TMentee) =>
+  //   studentApi
+  //     .update(user!)
+  //     .then(() => ref.current?.reload)
+  //     .then(() =>
+  //       enqueueSnackbar(`Cập nhât thành công`, {
+  //         variant: 'success',
+  //       })
+  //     )
+  //     .catch((err: any) => {
+  //       const errMsg = get(err.response, ['data', 'message'], `Có lỗi xảy ra. Vui lòng thử lại`);
+  //       enqueueSnackbar(errMsg, {
+  //         variant: 'error',
+  //       });
+  //     });
+  const updateCourseHandler = (user: TMentee) => {
+    // Placeholder for update logic
+    const parentId = user.parentId !== null ? user.parentId : undefined;
+    const courseId = '';
+  
+    studentApi
+      .update(user.id, user, parentId, courseId)  // Pass id, data, and optional parameters
       .then(() => ref.current?.reload)
-      .then(() =>
-        enqueueSnackbar(`Cập nhât thành công`, {
+      .then(() => {
+        enqueueSnackbar(`Cập nhật thành công`, {
           variant: 'success',
-        })
-      )
+        });
+      })
       .catch((err: any) => {
         const errMsg = get(err.response, ['data', 'message'], `Có lỗi xảy ra. Vui lòng thử lại`);
         enqueueSnackbar(errMsg, {
           variant: 'error',
         });
       });
+  };
 
   const columns = [
     {
@@ -153,7 +174,7 @@ const UserListPage = () => {
     },
     {
       title: 'Hình ảnh',
-      dataIndex: 'imageUrl',
+      dataIndex: 'imgUrl',
       hideInSearch: true,
       render: (src: any, { title }: any) => (
         <Avatar alt={title} src={src} style={{ width: '54px', height: '54px' }} />
@@ -162,35 +183,50 @@ const UserListPage = () => {
     {
       title: 'Họ và tên',
       dataIndex: 'fullName',
+      render: (text: any, record: any) => {
+        const lastName = record.lastName;
+        const firstName = record.firstName;
+        return `${lastName} ${firstName}`;
+      },
     },
     {
-      title: 'Email',
-      dataIndex: 'email',
-    },
-    {
-      title: 'Số điện thoại',
-      dataIndex: 'phone',
-    },
-    {
-      title: 'Thứ hạng',
-      dataIndex: 'badge',
-      render: (badge: any) => (
-        <Label color={badge === 1 ? 'info' : badge === 2 ? 'primary' : 'default'}>
-          {badge === 1 ? 'Senior' : badge === 2 ? 'Junior' : 'Fresher'}
-        </Label>
-      ),
-      hideInSearch: true,
-    },
-    {
-      title: 'Vai trò',
-      dataIndex: 'roleId',
-      render: (role: any) => (
-        <Label color={role === 1 ? 'info' : role === 2 ? 'primary' : 'default'}>
-          {role === 1 ? 'Học viên' : role === 2 ? 'Giảng viên' : 'Admin'}
-        </Label>
-      ),
-      hideInSearch: true,
-    },
+      title: 'Ngày sinh',
+      index: 'dateOfBirth',
+      //Why dafug this is not showing up normally but then it works for the courses page
+      //and i had to do it like this!?!?!?
+      render: (data: any, record: any) => {
+        // console.log('halppppppp: ' + record.dateOfBirth)
+        return record.dateOfBirth;
+      },
+    }
+    // {
+    //   title: 'Email',
+    //   dataIndex: 'email',
+    // },
+    // {
+    //   title: 'Số điện thoại',
+    //   dataIndex: 'phone',
+    // },
+    // {
+    //   title: 'Thứ hạng',
+    //   dataIndex: 'badge',
+    //   render: (badge: any) => (
+    //     <Label color={badge === 1 ? 'info' : badge === 2 ? 'primary' : 'default'}>
+    //       {badge === 1 ? 'Senior' : badge === 2 ? 'Junior' : 'Fresher'}
+    //     </Label>
+    //   ),
+    //   hideInSearch: true,
+    // },
+    // {
+    //   title: 'Vai trò',
+    //   dataIndex: 'roleId',
+    //   render: (role: any) => (
+    //     <Label color={role === 1 ? 'info' : role === 2 ? 'primary' : 'default'}>
+    //       {role === 1 ? 'Học viên' : role === 2 ? 'Giảng viên' : 'Admin'}
+    //     </Label>
+    //   ),
+    //   hideInSearch: true,
+    // },
     // {
     //   title: translate('common.table.isAvailable'),
     //   dataIndex: 'status',
@@ -309,7 +345,7 @@ const UserListPage = () => {
             { name: `${translate('dashboard')}`, href: PATH_DASHBOARD.root },
             {
               name: `Người dùng`,
-              href: PATH_DASHBOARD.courses.root,
+              href: PATH_DASHBOARD.users.root,
             },
             { name: `${translate('list')}` },
           ]}
@@ -327,6 +363,19 @@ const UserListPage = () => {
             </>
           }
         />,
+        <Button
+          key="create-student"
+          onClick={() => {
+            navigate(PATH_DASHBOARD.users.new);
+            //setFormModal(true);
+            setCurrentItem(null);
+            //handleCreateSubject();
+          }}
+          variant="contained"
+          startIcon={<Icon icon={plusFill} />}
+        >
+          {translate('studentPages.users.addBtn')}
+        </Button>,
       ]}
     >
       <Card>
@@ -365,7 +414,7 @@ const UserListPage = () => {
                 navigate(`${PATH_DASHBOARD.users.root}/${user.id}`);
                 setIsUpdate(true);
               }}
-              getData={userApi.getUsers}
+              getData={studentApi.getStudents}
               onDelete={setCurrentItem}
               columns={columns}
             />

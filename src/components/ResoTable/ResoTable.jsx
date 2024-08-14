@@ -167,8 +167,8 @@ const ResoTable = (
       defaultPageSize: 10,
       defaultParams: [{ current: 1, pageSize: 10 }],
       formatResult: (res) => ({
-        total: dataSource ? dataSource.length : res.data.metadata?.total,
-        list: dataSource ?? res.data?.data ?? [],
+        total: dataSource ? dataSource.length : res.data.totalPages,
+        list: dataSource ?? res.data?.items ?? [],
         success: true,
       }),
       onError: (error) =>
@@ -589,7 +589,7 @@ const ResoTable = (
     handleDelete,
     handleClick,
   ]);
-
+console.log(data);
   const settingColumns = () => {
     const handleToggle = (col, idx) => {
       const updateColumns = [..._columns];
